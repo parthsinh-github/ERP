@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { setAllReport } from '@/redux/ReportSlice';
+import { setAllReport } from '@/redux/reportSlice';
+
 import { REPORT_API_END_POINT } from '@/utils/constant';
 
 const useGetAllReport = () => {
