@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import compression from 'vite-plugin-compression';
 
 export default defineConfig({
+    base: './',  // ✅ ADD THIS LINE HERE
   plugins: [
     react(),
     compression({
@@ -11,7 +12,7 @@ export default defineConfig({
       filter: /\.(js|mjs|json|css|html|svg)$/i,
     }),
   ],
-  css: {
+    css: {
     postcss: './postcss.config.js', // optional but explicit
   },
   resolve: {
@@ -44,3 +45,4 @@ export default defineConfig({
     },
   },
 });
+
