@@ -43,7 +43,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit'],
           router: ['react-router-dom'],
-           plugins: [visualizer({ open: true })],
         },
       },
     },
