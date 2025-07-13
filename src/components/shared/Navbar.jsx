@@ -11,14 +11,13 @@ import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
 
 const Navbar = () => {
-  
+
   const { role, id } = useParams(); // get dynamic params
-  
-  const { user } = useSelector((store) => store.auth);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    const handleClick = () => {
+  const handleClick = () => {
     if (role && id) {
       navigate(`/${role}/${id}/announcement`);
     } else {
@@ -45,6 +44,94 @@ const Navbar = () => {
 
   return (
     <>
+      <div className="navbar-container">
+        <div className="navbar-content">
+          <div className="brand-section">
+            <div className="logo-icon">🎓</div>
+            <h1 className="brand-text">
+              College <span className="brand-highlight">ERP</span>
+            </h1>
+          </div>
+
+          {/* Navigation */}
+          <div className="nav-section">
+            <ul className="nav-list">
+              {/* Role-based Navigation */}
+              {user && user.role === 'recruiter' ? (
+                <>
+                  <li className="nav-item">
+                    <Link to="/admin/companies" className="nav-link">Companies</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/admin/jobs" className="nav-link">Jobs</Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <div onClick={handleClick} className="notification-btn">
+                      <Bell size={20} />
+                    </div>
+                  </li>
+                </>
+              )}
+            </ul>
+
+            {/* Authentication or Profile UI */}
+            {!user ? (
+              <div className="auth-buttons">
+                <Link to="/login" className="btn-outline">
+                  Login
+                </Link>
+                <Link to="/signup" className="btn-primary">
+                  Signup
+                </Link>
+              </div>
+            ) : (
+              <div className="profile-section">
+                {/* Display Avatar and Popover only if the user is logged in */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Avatar className="profile-avatar">
+                      <AvatarImage src={user.profilePhoto || "/default-avatar.png"} alt="avatar" />
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="popover-content">
+                    <div>
+                      <div className="profile-header">
+                        <Avatar className="profile-avatar-large">
+                          <AvatarImage src={user.profilePhoto || "/default-avatar.png"} alt="avatar" />
+                        </Avatar>
+                        <div className="profile-info">
+                          <h4>{user?.fullName || "Unknown User"}</h4>
+                          <p>{user?.role }</p>
+                        </div>
+                      </div>
+
+                      <div className="profile-actions">
+                        {/* route: "/profile" */}
+                       <Link to={`/${role}/${id}/Profile`} className="profile-action-btn">
+                          <User2 size={18} />
+                          View Profile
+                        </Link>
+                      </div>
+
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Logout Button visible only when user is logged in */}
+                <div onClick={logoutHandler} className="logout-btn">
+                  <LogOut size={18} />
+                  Logout
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+
       <style>{`
         .navbar-container {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -213,118 +300,110 @@ const Navbar = () => {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
         }
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
 
-        .profile-section {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
+.profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
 
-        .profile-avatar {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: 3px solid rgba(255, 255, 255, 0.3);
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+.profile-avatar:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
 
-        .profile-avatar:hover {
-          border-color: rgba(255, 255, 255, 0.6);
-          transform: scale(1.05);
-        }
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-weight: 500;
+}
 
-        .logout-btn {
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 10px;
-          padding: 10px 16px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: white;
-          font-weight: 500;
-        }
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
 
-        .logout-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          transform: translateY(-2px);
-        }
+.popover-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
 
-        .popover-content {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 16px;
-          padding: 20px;
-          width: 320px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
+.profile-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
 
-        .profile-header {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          margin-bottom: 16px;
-        }
+.profile-avatar-large {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid #667eea;
+  overflow: hidden;
+}
 
-        .profile-avatar-large {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          border: 3px solid #667eea;
-        }
+.profile-info h4 {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #1f2937;
+}
 
-        .profile-info h4 {
-          font-weight: 600;
-          margin: 0 0 4px 0;
-          color: #1f2937;
-        }
+.profile-info p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  word-break: break-word;
+}
 
-        .profile-info p {
-          font-size: 14px;
-          color: #6b7280;
-          margin: 0;
-        }
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-        .profile-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
+.profile-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 10px;
+  color: #667eea;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
 
-        .profile-action-btn {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px;
-          background: rgba(102, 126, 234, 0.1);
-          border-radius: 10px;
-          color: #667eea;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          font-weight: 500;
-        }
-
-        .profile-action-btn:hover {
-          background: rgba(102, 126, 234, 0.2);
-          transform: translateX(4px);
-        }
-
-        @keyframes pulse {
-          0%, 100% { 
-            transform: scale(1); 
-            opacity: 1;
-          }
-          50% { 
-            transform: scale(1.05); 
-            opacity: 0.8;
-          }
-        }
-
+.profile-action-btn:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateX(4px);
+}
         @media (max-width: 768px) {
           .navbar-content {
             padding: 0 16px;
@@ -350,92 +429,8 @@ const Navbar = () => {
           }
         }
       `}</style>
-      
-      <div className="navbar-container">
-        <div className="navbar-content">
-          <div className="brand-section">
-            <div className="logo-icon">🎓</div>
-            <h1 className="brand-text">
-              College <span className="brand-highlight">ERP</span>
-            </h1>
-          </div>
 
-          {/* Navigation */}
-          <div className="nav-section">
-            <ul className="nav-list">
-              {/* Role-based Navigation */}
-              {user && user.role === 'recruiter' ? (
-                <>
-                  <li className="nav-item">
-                    <Link to="/admin/companies" className="nav-link">Companies</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/jobs" className="nav-link">Jobs</Link>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li className="nav-item">
-                    <div onClick={handleClick} className="notification-btn">
-                      <Bell size={20} />
-                    </div>
-                  </li>
-                </>
-              )}
-            </ul>
 
-            {/* Authentication or Profile UI */}
-            {!user ? (
-              <div className="auth-buttons">
-                <Link to="/login" className="btn-outline">
-                  Login
-                </Link>
-                <Link to="/signup" className="btn-primary">
-                  Signup
-                </Link>
-              </div>
-            ) : (
-              <div className="profile-section">
-                {/* Display Avatar and Popover only if the user is logged in */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Avatar className="profile-avatar">
-                      <AvatarImage src={user?.profile?.profilePhoto} alt="@shadcn" />
-                    </Avatar>
-                  </PopoverTrigger>
-                  <PopoverContent className="popover-content">
-                    <div>
-                      <div className="profile-header">
-                        <Avatar className="profile-avatar-large">
-                          <AvatarImage src={user?.profile?.profilePhoto} alt="@shadcn" />
-                        </Avatar>
-                        <div className="profile-info">
-                          <h4>{user?.fullname}</h4>
-                          <p>{user?.profile?.bio}</p>
-                        </div>
-                      </div>
-                      <div className="profile-actions">
-                        {user && user.role === 'student' && (
-                          <Link to="/profile" className="profile-action-btn">
-                            <User2 size={18} />
-                            View Profile
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-
-                {/* Logout Button visible only when user is logged in */}
-                <div onClick={logoutHandler} className="logout-btn">
-                  <LogOut size={18} />
-                  Logout
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
     </>
   );
 };

@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
-// import useGetAllDocumentRequests from '../hooks/useGetAllDocumentRequests';
 import useGetAllDocumentRequests from '../hooks/useGetAllDocumentRequests';
 
 const Document = () => {
   const { role, id } = useParams();
+  const { allRequests } = useSelector((state) => state.document);
+  const { user } = useSelector((state) => state.auth);
 
-  useGetAllDocumentRequests(); // fetches all requests
+  const [showDialog, setShowDialog] = useState(false);
 
-  const { allRequests } = useSelector((state) => state.document); // coming from slice
+  useGetAllDocumentRequests();
 
   const handleAction = async (requestId, status) => {
     try {
@@ -22,20 +23,14 @@ const Document = () => {
           logMessage: `Marked as ${status} by admin`,
         }),
       });
-      console.log("response : " + res);
-      console.log("Request id  : " + requestId);
-
 
       const data = await res.json();
 
-      if (!res.ok) {
-        // Backend responded with an error status
-        throw new Error(data.error || 'Failed to update status');
-      }
+      if (!res.ok) throw new Error(data.error || 'Failed to update status');
 
       if (data.success) {
         alert(`✅ Status updated to ${status}`);
-        window.location.reload(); // Or better: refetch state using a hook
+        window.location.reload();
       } else {
         alert(`⚠️ Failed to update: ${data.error || 'Unknown error'}`);
       }
@@ -49,6 +44,18 @@ const Document = () => {
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>📄 Document Requests</h2>
+
+      {/* ✅ Show create request button for students */}
+      {user?.role === 'student' && (
+        <div style={styles.btnWrapper}>
+          <button style={styles.createBtn} onClick={() => setShowDialog(true)}>
+            ➕ Create New Request
+          </button>
+        </div>
+      )}
+
+      {/* ✅ Show Modal Dialog */}
+      {showDialog && <CreateDocumentDialog id={id} onClose={() => setShowDialog(false)} />}
 
       {allRequests.length === 0 ? (
         <p style={styles.noData}>No document requests found.</p>
@@ -68,7 +75,7 @@ const Document = () => {
               </p>
 
               <div style={styles.actions}>
-                {req.status === 'pending' && (
+                {req.status === 'pending' ? (
                   <>
                     <button
                       style={styles.approveBtn}
@@ -85,8 +92,7 @@ const Document = () => {
                       Reject
                     </button>
                   </>
-                )}
-                {req.status !== 'pending' && (
+                ) : (
                   <div style={styles.readOnlyStatus}>
                     <Clock size={14} /> Action already taken
                   </div>
@@ -100,7 +106,71 @@ const Document = () => {
   );
 };
 
-// 💄 Inline styles
+// 🧩 Modal component
+const CreateDocumentDialog = ({ id, onClose }) => {
+  const [form, setForm] = useState({
+    documentType: '',
+    reason: '',
+    deliveryMode: 'email',
+    deliveryEmail: '',
+    contactNumber: '',
+    expectedNeedDate: '',
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`http://localhost:3000/api/v1/document/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('✅ Request created');
+        onClose();
+        window.location.reload();
+      } else {
+        alert('❌ Failed to create: ' + data.error);
+      }
+    } catch (error) {
+      alert('❌ Error submitting: ' + error.message);
+    }
+  };
+
+  return (
+    <div style={styles.dialogOverlay}>
+      <div style={styles.dialog}>
+        <h3 style={{ marginBottom: '12px' }}>📩 Create Document Request</h3>
+        <form onSubmit={submitHandler} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <input name="documentType" placeholder="Document Type" required onChange={handleChange} />
+          <input name="reason" placeholder="Reason" required onChange={handleChange} />
+          <select name="deliveryMode" onChange={handleChange}>
+            <option value="email">Email</option>
+            <option value="print">Printed Copy</option>
+          </select>
+          <input name="deliveryEmail" placeholder="Delivery Email (if email)" onChange={handleChange} />
+          <input name="contactNumber" placeholder="Contact Number" required onChange={handleChange} />
+          <input type="date" name="expectedNeedDate" onChange={handleChange} />
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <button type="button" onClick={onClose}>Cancel</button>
+            <button type="submit" style={styles.createBtn}>Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// 💄 Styles
 const styles = {
   container: {
     padding: '40px',
@@ -114,6 +184,22 @@ const styles = {
     marginBottom: '30px',
     textAlign: 'center',
     color: '#333',
+  },
+  btnWrapper: {
+    textAlign: 'right',
+    marginBottom: '20px',
+  },
+  createBtn: {
+    padding: '10px 18px',
+    backgroundColor: '#4f46e5',
+    color: '#fff',
+    fontWeight: 'bold',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+    transition: '0.3s',
   },
   noData: {
     textAlign: 'center',
@@ -170,9 +256,24 @@ const styles = {
     alignItems: 'center',
     gap: '5px',
   },
+  dialogOverlay: {
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  dialog: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '10px',
+    width: '400px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+  },
 };
 
-// 🟡 Dynamic status color
 const getStatusStyle = (status) => {
   switch (status) {
     case 'approved':
@@ -180,7 +281,7 @@ const getStatusStyle = (status) => {
     case 'rejected':
       return { color: '#ef4444', fontWeight: 'bold' };
     default:
-      return { color: '#eab308', fontWeight: 'bold' }; // pending
+      return { color: '#eab308', fontWeight: 'bold' };
   }
 };
 

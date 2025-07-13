@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import compression from 'vite-plugin-compression';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
     base: './',  // ✅ ADD THIS LINE HERE
@@ -11,7 +12,9 @@ export default defineConfig({
       algorithm: 'gzip',
       filter: /\.(js|mjs|json|css|html|svg)$/i,
     }),
+        visualizer({ open: true }) // ✅ moved here
   ],
+  
     css: {
     postcss: './postcss.config.js', // optional but explicit
   },
@@ -40,6 +43,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit'],
           router: ['react-router-dom'],
+           plugins: [visualizer({ open: true })],
         },
       },
     },

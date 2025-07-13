@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import SharedLayout from './layouts/SharedLayout';
 import Document from './components/Document';
+import Profile from './components/Profile';
 
 const Home = lazy(() => import('./components/Home'));
 const Login = lazy(() => import('./components/auth/Login'));
@@ -30,6 +31,7 @@ const appRouter = createBrowserRouter([
       { path: 'report', element: <Report /> },
       { path: 'AllUsers', element: <AllUsers /> },
       { path: 'Document', element: <Document /> },
+      { path: 'Profile', element: <Profile /> },
     ]
   },
 ]);
