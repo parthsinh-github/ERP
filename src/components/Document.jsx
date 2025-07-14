@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { CheckCircle, XCircle, Clock, Plus, FileText, User, Phone, Mail, Calendar, Package } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
-import useGetAllDocumentRequests from '../hooks/useGetAllDocumentRequests';
+import { useSelector } from 'react-redux';
+
+
+const useGetAllDocumentRequests = () => {};
 
 const Document = () => {
   const { role, id } = useParams();
@@ -43,58 +45,112 @@ const Document = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>📄 Document Requests</h2>
-
-      {/* ✅ Show create request button for students */}
-      {user?.role === 'student' && (
-        <div style={styles.btnWrapper}>
-          <button style={styles.createBtn} onClick={() => setShowDialog(true)}>
-            ➕ Create New Request
-          </button>
+      <div style={styles.header}>
+        <div style={styles.headerContent}>
+          <div style={styles.headerTitle}>
+            <FileText style={styles.headerIcon} />
+            <h1 style={styles.heading}>Document Requests</h1>
+          </div>
+          <div style={styles.headerStats}>
+            <span style={styles.statBadge}>
+              {allRequests.length} {allRequests.length === 1 ? 'Request' : 'Requests'}
+            </span>
+          </div>
         </div>
-      )}
+        
+        {user?.role === 'student' && (
+          <button style={styles.createBtn} onClick={() => setShowDialog(true)}>
+            <Plus size={18} />
+            Create New Request
+          </button>
+        )}
+      </div>
 
-      {/* ✅ Show Modal Dialog */}
       {showDialog && <CreateDocumentDialog id={id} onClose={() => setShowDialog(false)} />}
 
       {allRequests.length === 0 ? (
-        <p style={styles.noData}>No document requests found.</p>
+        <div style={styles.emptyState}>
+          <FileText size={64} style={styles.emptyIcon} />
+          <h3 style={styles.emptyTitle}>No document requests found</h3>
+          <p style={styles.emptyText}>
+            {user?.role === 'student' 
+              ? 'Create your first document request to get started' 
+              : 'Students haven\'t submitted any requests yet'}
+          </p>
+        </div>
       ) : (
         <div style={styles.grid}>
           {allRequests.map((req) => (
             <div key={req._id} style={styles.card}>
-              <h3 style={styles.title}>{req.documentType}</h3>
-              <p><strong>Reason:</strong> {req.reason}</p>
-              <p><strong>Student:</strong> {req.student?.fullName}</p>
-              <p><strong>Contact:</strong> {req.contactNumber}</p>
-              <p><strong>Email:</strong> {req.deliveryEmail || 'N/A'}</p>
-              <p><strong>Delivery Mode:</strong> {req.deliveryMode}</p>
-              <p><strong>Need by:</strong> {req.expectedNeedDate ? new Date(req.expectedNeedDate).toDateString() : 'Not mentioned'}</p>
-              <p><strong>Status:</strong>
-                <span style={getStatusStyle(req.status)}> {req.status.toUpperCase()} </span>
-              </p>
+              <div style={styles.cardHeader}>
+                <h3 style={styles.cardTitle}>{req.documentType}</h3>
+                <div style={getStatusBadgeStyle(req.status)}>
+                  {req.status.toUpperCase()}
+                </div>
+              </div>
+              
+              <div style={styles.cardContent}>
+                <div style={styles.infoRow}>
+                  <FileText size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Reason:</span>
+                  <span style={styles.infoValue}>{req.reason}</span>
+                </div>
+                
+                <div style={styles.infoRow}>
+                  <User size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Student:</span>
+                  <span style={styles.infoValue}>{req.student?.fullName}</span>
+                </div>
+                
+                <div style={styles.infoRow}>
+                  <Phone size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Contact:</span>
+                  <span style={styles.infoValue}>{req.contactNumber}</span>
+                </div>
+                
+                <div style={styles.infoRow}>
+                  <Mail size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Email:</span>
+                  <span style={styles.infoValue}>{req.deliveryEmail || 'N/A'}</span>
+                </div>
+                
+                <div style={styles.infoRow}>
+                  <Package size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Delivery:</span>
+                  <span style={styles.infoValue}>{req.deliveryMode}</span>
+                </div>
+                
+                <div style={styles.infoRow}>
+                  <Calendar size={16} style={styles.infoIcon} />
+                  <span style={styles.infoLabel}>Need by:</span>
+                  <span style={styles.infoValue}>
+                    {req.expectedNeedDate ? new Date(req.expectedNeedDate).toDateString() : 'Not mentioned'}
+                  </span>
+                </div>
+              </div>
 
-              <div style={styles.actions}>
+              <div style={styles.cardActions}>
                 {req.status === 'pending' ? (
-                  <>
+                  <div style={styles.actionButtons}>
                     <button
                       style={styles.approveBtn}
                       onClick={() => handleAction(req._id, 'approved')}
                     >
-                      <CheckCircle size={16} style={{ marginRight: '5px' }} />
+                      <CheckCircle size={16} />
                       Approve
                     </button>
                     <button
                       style={styles.rejectBtn}
                       onClick={() => handleAction(req._id, 'rejected')}
                     >
-                      <XCircle size={16} style={{ marginRight: '5px' }} />
+                      <XCircle size={16} />
                       Reject
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <div style={styles.readOnlyStatus}>
-                    <Clock size={14} /> Action already taken
+                    <Clock size={16} />
+                    Action completed
                   </div>
                 )}
               </div>
@@ -106,7 +162,6 @@ const Document = () => {
   );
 };
 
-// 🧩 Modal component
 const CreateDocumentDialog = ({ id, onClose }) => {
   const [form, setForm] = useState({
     documentType: '',
@@ -146,142 +201,426 @@ const CreateDocumentDialog = ({ id, onClose }) => {
   };
 
   return (
-    <div style={styles.dialogOverlay}>
+    <div style={styles.dialogOverlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div style={styles.dialog}>
-        <h3 style={{ marginBottom: '12px' }}>📩 Create Document Request</h3>
-        <form onSubmit={submitHandler} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <input name="documentType" placeholder="Document Type" required onChange={handleChange} />
-          <input name="reason" placeholder="Reason" required onChange={handleChange} />
-          <select name="deliveryMode" onChange={handleChange}>
-            <option value="email">Email</option>
-            <option value="print">Printed Copy</option>
-          </select>
-          <input name="deliveryEmail" placeholder="Delivery Email (if email)" onChange={handleChange} />
-          <input name="contactNumber" placeholder="Contact Number" required onChange={handleChange} />
-          <input type="date" name="expectedNeedDate" onChange={handleChange} />
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            <button type="button" onClick={onClose}>Cancel</button>
-            <button type="submit" style={styles.createBtn}>Submit</button>
+        <div style={styles.dialogHeader}>
+          <h3 style={styles.dialogTitle}>Create Document Request</h3>
+          <button style={styles.closeBtn} onClick={onClose}>×</button>
+        </div>
+        
+        <div style={styles.form} onSubmit={submitHandler}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Document Type *</label>
+            <input 
+              name="documentType" 
+              placeholder="e.g., Transcript, Certificate, ID Card"
+              required 
+              onChange={handleChange}
+              style={styles.input}
+            />
           </div>
-        </form>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Reason *</label>
+            <input 
+              name="reason" 
+              placeholder="Purpose for requesting this document"
+              required 
+              onChange={handleChange}
+              style={styles.input}
+            />
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Delivery Mode</label>
+            <select name="deliveryMode" onChange={handleChange} style={styles.select}>
+              <option value="email">Email</option>
+              <option value="print">Printed Copy</option>
+            </select>
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Delivery Email</label>
+            <input 
+              name="deliveryEmail" 
+              placeholder="your.email@example.com"
+              type="email"
+              onChange={handleChange}
+              style={styles.input}
+            />
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Contact Number *</label>
+            <input 
+              name="contactNumber" 
+              placeholder="+1 (555) 123-4567"
+              required 
+              onChange={handleChange}
+              style={styles.input}
+            />
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Expected Need Date</label>
+            <input 
+              type="date" 
+              name="expectedNeedDate" 
+              onChange={handleChange}
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.dialogActions}>
+            <button type="button" onClick={onClose} style={styles.cancelBtn}>
+              Cancel
+            </button>
+            <button type="submit" style={styles.submitBtn} onClick={submitHandler}>
+              <Plus size={16} />
+              Create Request
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// 💄 Styles
 const styles = {
   container: {
-    padding: '40px',
-    fontFamily: 'Segoe UI, sans-serif',
-    maxWidth: '1200px',
-    margin: '0 auto',
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    padding: '32px',
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '32px',
+    flexWrap: 'wrap',
+    gap: '16px',
+  },
+  headerContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '24px',
+  },
+  headerTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  headerIcon: {
+    color: '#ffffff',
+    size: 32,
   },
   heading: {
-    fontSize: '28px',
+    fontSize: '32px',
     fontWeight: '700',
-    marginBottom: '30px',
-    textAlign: 'center',
-    color: '#333',
+    color: '#ffffff',
+    margin: '0',
+    letterSpacing: '-0.02em',
   },
-  btnWrapper: {
-    textAlign: 'right',
-    marginBottom: '20px',
+  headerStats: {
+    display: 'flex',
+    gap: '12px',
+  },
+  statBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    color: '#ffffff',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontSize: '14px',
+    fontWeight: '500',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
   },
   createBtn: {
-    padding: '10px 18px',
-    backgroundColor: '#4f46e5',
-    color: '#fff',
-    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 24px',
+    backgroundColor: '#ffffff',
+    color: '#667eea',
     border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
+    borderRadius: '12px',
+    fontWeight: '600',
     fontSize: '14px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-    transition: '0.3s',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
   },
-  noData: {
+  emptyState: {
     textAlign: 'center',
-    color: '#888',
+    backgroundColor: '#ffffff',
+    borderRadius: '20px',
+    padding: '64px 32px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+  },
+  emptyIcon: {
+    color: '#e2e8f0',
+    marginBottom: '16px',
+  },
+  emptyTitle: {
+    fontSize: '24px',
+    fontWeight: '600',
+    color: '#1e293b',
+    margin: '0 0 8px 0',
+  },
+  emptyText: {
     fontSize: '16px',
+    color: '#64748b',
+    margin: '0',
   },
   grid: {
     display: 'grid',
-    gap: '20px',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+    gap: '24px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
   },
   card: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-    border: '1px solid #eee',
+    backgroundColor: '#ffffff',
+    borderRadius: '20px',
+    padding: '24px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    transition: 'all 0.3s ease',
+    position: 'relative',
+    overflow: 'hidden',
   },
-  title: {
-    fontSize: '20px',
-    fontWeight: '600',
-    color: '#4f46e5',
-    marginBottom: '10px',
-  },
-  actions: {
+  cardHeader: {
     display: 'flex',
-    gap: '10px',
-    marginTop: '12px',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: '20px',
+  },
+  cardTitle: {
+    fontSize: '20px',
+    fontWeight: '700',
+    color: '#1e293b',
+    margin: '0',
+    flex: 1,
+    lineHeight: '1.3',
+  },
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginBottom: '20px',
+  },
+  infoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  infoIcon: {
+    color: '#667eea',
+    flexShrink: 0,
+  },
+  infoLabel: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#64748b',
+    minWidth: '70px',
+  },
+  infoValue: {
+    fontSize: '14px',
+    color: '#1e293b',
+    fontWeight: '400',
+  },
+  cardActions: {
+    borderTop: '1px solid #f1f5f9',
+    paddingTop: '16px',
+  },
+  actionButtons: {
+    display: 'flex',
+    gap: '12px',
   },
   approveBtn: {
-    backgroundColor: '#22c55e',
-    color: '#fff',
-    padding: '8px 12px',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
+    gap: '8px',
+    backgroundColor: '#10b981',
+    color: '#ffffff',
+    padding: '10px 16px',
+    border: 'none',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
   },
   rejectBtn: {
-    backgroundColor: '#ef4444',
-    color: '#fff',
-    padding: '8px 12px',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
+    gap: '8px',
+    backgroundColor: '#ef4444',
+    color: '#ffffff',
+    padding: '10px 16px',
+    border: 'none',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(239, 68, 68, 0.25)',
   },
   readOnlyStatus: {
-    marginTop: '10px',
-    color: '#999',
     display: 'flex',
     alignItems: 'center',
-    gap: '5px',
+    gap: '8px',
+    color: '#64748b',
+    fontSize: '14px',
+    fontWeight: '500',
   },
   dialogOverlay: {
     position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
+    backdropFilter: 'blur(4px)',
   },
   dialog: {
-    backgroundColor: '#fff',
-    padding: '20px',
+    backgroundColor: '#ffffff',
+    borderRadius: '20px',
+    width: '90%',
+    maxWidth: '500px',
+    maxHeight: '90vh',
+    overflow: 'auto',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+  },
+  dialogHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '24px 24px 0',
+  },
+  dialogTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: '#1e293b',
+    margin: '0',
+  },
+  closeBtn: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    fontSize: '24px',
+    color: '#64748b',
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: '6px',
+    transition: 'all 0.2s ease',
+  },
+  form: {
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+  },
+  label: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#374151',
+  },
+  input: {
+    padding: '12px 16px',
+    border: '2px solid #e5e7eb',
     borderRadius: '10px',
-    width: '400px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+    fontSize: '14px',
+    transition: 'all 0.2s ease',
+    backgroundColor: '#ffffff',
+    outline: 'none',
+  },
+  select: {
+    padding: '12px 16px',
+    border: '2px solid #e5e7eb',
+    borderRadius: '10px',
+    fontSize: '14px',
+    transition: 'all 0.2s ease',
+    backgroundColor: '#ffffff',
+    outline: 'none',
+    cursor: 'pointer',
+  },
+  dialogActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '12px',
+    paddingTop: '20px',
+    borderTop: '1px solid #f1f5f9',
+  },
+  cancelBtn: {
+    padding: '10px 20px',
+    backgroundColor: '#f8fafc',
+    color: '#64748b',
+    border: '1px solid #e2e8f0',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  submitBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 20px',
+    backgroundColor: '#667eea',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(102, 126, 234, 0.25)',
   },
 };
 
-const getStatusStyle = (status) => {
+const getStatusBadgeStyle = (status) => {
+  const baseStyle = {
+    padding: '6px 12px',
+    borderRadius: '20px',
+    fontSize: '12px',
+    fontWeight: '700',
+    letterSpacing: '0.5px',
+  };
+
   switch (status) {
     case 'approved':
-      return { color: '#22c55e', fontWeight: 'bold' };
+      return {
+        ...baseStyle,
+        backgroundColor: '#d1fae5',
+        color: '#065f46',
+        border: '1px solid #a7f3d0',
+      };
     case 'rejected':
-      return { color: '#ef4444', fontWeight: 'bold' };
+      return {
+        ...baseStyle,
+        backgroundColor: '#fee2e2',
+        color: '#991b1b',
+        border: '1px solid #fecaca',
+      };
     default:
-      return { color: '#eab308', fontWeight: 'bold' };
+      return {
+        ...baseStyle,
+        backgroundColor: '#fef3c7',
+        color: '#92400e',
+        border: '1px solid #fed7aa',
+      };
   }
 };
 

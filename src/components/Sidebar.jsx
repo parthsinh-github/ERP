@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Home, BookOpen, FileText, BarChart3, Users, Settings, ChevronRight, Menu } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     
@@ -10,6 +10,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const [activeItem, setActiveItem] = useState('dashboard');
     const [hoveredItem, setHoveredItem] = useState(null);
     const [mounted, setMounted] = useState(false);
+    const navigate = useNavigate();
     
 
     const {role ,id }= useParams();
@@ -193,17 +194,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
     ];
 
-    const handleItemClick = (item) => {
-        setActiveItem(item.id);
-        
-        // In a real app, you would use navigate(item.route) here
-        console.log(`Navigating to: ${item.route}`);
-        
-        // For demo purposes, show an alert
-        setTimeout(() => {
-            alert(`Would navigate to: ${item.route}`);
-        }, 200);
-    };
+   
 
     const groupedItems = menuItems.reduce((acc, item) => {
         if (!acc[item.section]) {
@@ -279,7 +270,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                             <div
                                                 key={item.id}
                                                 style={getItemStyle(isActive, isHovered)}
-                                                onClick={() => handleItemClick(item)}
+                                                  onClick={() => navigate(item.route)}
                                                 onMouseEnter={() => setHoveredItem(item.id)}
                                                 onMouseLeave={() => setHoveredItem(null)}
                                             >
