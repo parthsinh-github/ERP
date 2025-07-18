@@ -17,13 +17,16 @@ const Report = () => {
     const fetchReports = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/api/v1/report/all');
+        const response = await fetch('https://erp-backend-reupload.onrender.com/api/v1/report/all');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
+
+        console.log("Data : ",data);
+        
         setReports(data.data);
       } catch (err) {
         console.error('Error fetching reports:', err);
@@ -59,7 +62,7 @@ const Report = () => {
                          report.type.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = filterStatus === 'all' || 
-                         report.status.toLowerCase() === filterStatus.toLowerCase();
+                        report.status.toLowerCase() === filterStatus.toLowerCase();
     
     return matchesSearch && matchesStatus;
   });
@@ -87,7 +90,7 @@ const Report = () => {
     return (
       <div style={styles.container}>
         <div style={styles.errorContainer}>
-          <p style={styles.errorText}>Error loading reports: {error}</p>
+          <p style={styles.errorText}>Error Good reports: {error}</p>
           <button 
             onClick={() => window.location.reload()} 
             style={styles.retryButton}
