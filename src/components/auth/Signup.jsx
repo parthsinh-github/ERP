@@ -21,7 +21,8 @@
       city: '',
       pincode: '',
       gender: '',
-      dateOfBirth: ''
+      dateOfBirth: '',
+      otp:'',
     });
 
     const { loading } = useSelector((state) => state.auth);
@@ -79,8 +80,11 @@ const [isOtpSent, setIsOtpSent] = useState(false);
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'OTP verification failed');
-
+      console.log("Otp verified");
+      
       toast.success('OTP verified');
+
+      
       setIsOtpVerified(true);
     } catch (err) {
       console.error('OTP verification error:', err.message);
@@ -424,7 +428,8 @@ const [isOtpSent, setIsOtpSent] = useState(false);
     <input
       type="text"
       placeholder="Enter OTP"
-      value={otp}
+      value={input.password}
+       className="form-input"
       onChange={(e) => setOtp(e.target.value)}
     />
     <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
