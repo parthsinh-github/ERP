@@ -112,8 +112,9 @@ const [isOtpSent, setIsOtpSent] = useState(false);
 
 
     try {
-
+      const finalPayload = { ...input, otp };
     dispatch(setLoading(true));
+
 
     const res = await fetch(`${USER_API_END_POINT}/register`, {
       method: 'POST',
@@ -425,13 +426,14 @@ const [isOtpSent, setIsOtpSent] = useState(false);
 
 {isOtpSent && (
   <>
-    <input
-      type="text"
-      placeholder="Enter OTP"
-      value={input.password}
-       className="form-input"
-      onChange={(e) => setOtp(e.target.value)}
-    />
+  <input
+  type="text"
+  placeholder="Enter OTP"
+  value={otp}
+  className="form-input"
+  onChange={(e) => setOtp(e.target.value)}
+/>
+
     <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
   </>
 )}
