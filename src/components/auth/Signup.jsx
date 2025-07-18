@@ -29,6 +29,8 @@
     const navigate = useNavigate();
     // 🔼 Add at the top inside your component
 const [otp, setOtp] = useState('');
+const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
 
 
     const handleChange = (e) => {
@@ -41,44 +43,50 @@ const [otp, setOtp] = useState('');
       setInput(prev => ({ ...prev, role: value, secretKey: '' }));
     };
 
-    const handleSendOtp = async (email) => {
+  const handleSendOtp = async () => {
+    if (!input.email) {
+      alert('Enter email first');
+      return;
+    }
+
     try {
       const res = await fetch(`${USER_API_END_POINT}/send-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: input.email }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
-      alert("OTP sent!");
+      if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
+
+      alert('OTP sent!');
+      setIsOtpSent(true); // ✅ show OTP input & verify button
     } catch (err) {
-      console.error("Error sending OTP:", err.message);
+      console.error('Error sending OTP:', err.message);
+      alert(err.message);
     }
   };
-  // ✅ Declare this FIRST
-  const handleVerifyOtp = async (email, otp) => {
+
+  const handleVerifyOtp = async () => {
+    if (!otp) return toast.error('Enter OTP first');
+
     try {
       const res = await fetch(`${USER_API_END_POINT}/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: input.email, otp }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "OTP verification failed");
+      if (!res.ok) throw new Error(data.message || 'OTP verification failed');
 
-      return true;
+      toast.success('OTP verified');
+      setIsOtpVerified(true);
     } catch (err) {
-      console.error("OTP verification error:", err.message);
-      return false;
+      console.error('OTP verification error:', err.message);
+      toast.error(err.message);
     }
   };
-
 
 
 
@@ -92,11 +100,11 @@ const [otp, setOtp] = useState('');
       if ((input.role === 'admin' || input.role === 'faculty') && !input.secretKey) {
         return toast.error('Secret key is required for admin/faculty');
       }
-     const isOtpVerified = await handleVerifyOtp(input.email, otp);
-      if (!isOtpVerified) {
-        alert("OTP verification failed");
-        return;
-      }
+     
+    if (!isOtpVerified) {
+      toast.error('Please verify OTP before submitting');
+      return;
+    }
 
 
     try {
@@ -409,13 +417,20 @@ const [otp, setOtp] = useState('');
                       required
                       className="form-input"
                     />
-                    <input
-  type="text"
-  name="otp"
-  value={otp}
-  onChange={(e) => setOtp(e.target.value)}
-  placeholder="Enter OTP"
-/>
+                    <button type="button" onClick={handleSendOtp}>Send OTP</button>
+
+{isOtpSent && (
+  <>
+    <input
+      type="text"
+      placeholder="Enter OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+    />
+    <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
+  </>
+)}
+
                   </div>
                 </div>
 
