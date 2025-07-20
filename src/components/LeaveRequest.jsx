@@ -4,16 +4,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, X, Calendar, User, FileText, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import useGetAllLeave from '../hooks/useGetAllLeave';
 
+import { LEAVE_API_END_POINT } from '@/utils/constant';
+
 const LeaveRequest = () => {
   const { role, id } = useParams();
   const refreshLeave = useGetAllLeave();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [selectedLeave, setSelectedLeave] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  
+
   const { allLeave } = useSelector((state) => state.leave);
   const userId = JSON.parse(localStorage.getItem('user'))?._id;
 
@@ -39,7 +41,7 @@ const LeaveRequest = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/leave/submit/${id}`, {
+      const response = await fetch(`${LEAVE_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,6 +52,8 @@ const LeaveRequest = () => {
         }),
       });
 
+      // console.log("Data is : ",response);
+      
       if (!response.ok) throw new Error('Failed to submit leave request');
 
       alert('Leave request sent!');
@@ -99,12 +103,12 @@ const LeaveRequest = () => {
       let response;
 
       if (role === 'student' && action === 'withdraw') {
-        response = await fetch(`http://localhost:3000/api/v1/leave/${id}/${selectedLeave._id}`, {
+        response = await fetch(`${LEAVE_API_END_POINT}/${id}/${selectedLeave._id}`, {
           method: 'DELETE',
         });
         console.log("Delete response : ", response);
       } else if ((role === 'admin' || role === 'faculty') && (action === 'approved' || action === 'rejected')) {
-        response = await fetch(`http://localhost:3000/api/v1/leave/${selectedLeave._id}/${id}`, {
+        response = await fetch(`${LEAVE_API_END_POINT}/${selectedLeave._id}/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: action }),
@@ -202,7 +206,7 @@ const LeaveRequest = () => {
               </div>
             </div>
             <div style={styles.statCard}>
-              <div style={{...styles.statIcon, backgroundColor: '#16a34a'}}>
+              <div style={{ ...styles.statIcon, backgroundColor: '#16a34a' }}>
                 <CheckCircle size={20} />
               </div>
               <div style={styles.statInfo}>
@@ -213,7 +217,7 @@ const LeaveRequest = () => {
               </div>
             </div>
             <div style={styles.statCard}>
-              <div style={{...styles.statIcon, backgroundColor: '#ef4444'}}>
+              <div style={{ ...styles.statIcon, backgroundColor: '#ef4444' }}>
                 <XCircle size={20} />
               </div>
               <div style={styles.statInfo}>
@@ -224,9 +228,9 @@ const LeaveRequest = () => {
               </div>
             </div>
           </div>
-          
-          <button 
-            onClick={() => setShowForm(true)} 
+
+          <button
+            onClick={() => setShowForm(true)}
             style={styles.addButton}
           >
             <Plus size={20} style={{ marginRight: '8px' }} />
@@ -244,8 +248,8 @@ const LeaveRequest = () => {
         ) : (
           <div style={styles.grid}>
             {allLeave?.map((item) => (
-              <div 
-                key={item._id} 
+              <div
+                key={item._id}
                 style={styles.card}
                 onClick={() => handleCardClick(item)}
               >
@@ -255,10 +259,10 @@ const LeaveRequest = () => {
                     <p style={styles.cardSubtitle}>ID: {item.studentId}</p>
                   </div>
                   <div style={styles.statusBadge}>
-                    <div style={{...styles.statusIcon, color: getStatusColor(item.status)}}>
+                    <div style={{ ...styles.statusIcon, color: getStatusColor(item.status) }}>
                       {getStatusIcon(item.status)}
                     </div>
-                    <span style={{...styles.statusText, color: getStatusColor(item.status)}}>
+                    <span style={{ ...styles.statusText, color: getStatusColor(item.status) }}>
                       {item.status}
                     </span>
                   </div>
@@ -269,7 +273,7 @@ const LeaveRequest = () => {
                     <User size={16} style={{ marginRight: '8px', color: '#64748b' }} />
                     <span style={styles.cardInfo}>{item.department}</span>
                   </div>
-                  
+
                   <div style={styles.cardInfoRow}>
                     <Calendar size={16} style={{ marginRight: '8px', color: '#64748b' }} />
                     <span style={styles.cardInfo}>
@@ -418,10 +422,10 @@ const LeaveRequest = () => {
                     <p style={styles.detailSubtitle}>ID: {selectedLeave.studentId}</p>
                   </div>
                   <div style={styles.statusBadge}>
-                    <div style={{...styles.statusIcon, color: getStatusColor(selectedLeave.status)}}>
+                    <div style={{ ...styles.statusIcon, color: getStatusColor(selectedLeave.status) }}>
                       {getStatusIcon(selectedLeave.status)}
                     </div>
-                    <span style={{...styles.statusText, color: getStatusColor(selectedLeave.status)}}>
+                    <span style={{ ...styles.statusText, color: getStatusColor(selectedLeave.status) }}>
                       {selectedLeave.status}
                     </span>
                   </div>
@@ -448,23 +452,23 @@ const LeaveRequest = () => {
 
                 <div style={styles.actionButtons}>
                   {role === 'student' ? (
-                    <button 
-                      style={styles.withdrawButton} 
+                    <button
+                      style={styles.withdrawButton}
                       onClick={() => handleAction('withdraw')}
                     >
                       Withdraw Request
                     </button>
                   ) : (
                     <>
-                      <button 
-                        style={styles.approveButton} 
+                      <button
+                        style={styles.approveButton}
                         onClick={() => handleAction('approved')}
                       >
                         <CheckCircle size={16} style={{ marginRight: '6px' }} />
                         Approve
                       </button>
-                      <button 
-                        style={styles.rejectButton} 
+                      <button
+                        style={styles.rejectButton}
                         onClick={() => handleAction('rejected')}
                       >
                         <XCircle size={16} style={{ marginRight: '6px' }} />
@@ -902,20 +906,20 @@ const styles = {
     transition: 'all 0.3s ease',
   },
   rejectButton: {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  padding: '10px 18px',
-  backgroundColor: '#ef4444',     // Tailwind's red-500
-  color: '#fff',
-  border: 'none',
-  borderRadius: '10px',
-  fontSize: '15px',
-  fontWeight: '600',
-  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)', // subtle red shadow
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-},
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 18px',
+    backgroundColor: '#ef4444',     // Tailwind's red-500
+    color: '#fff',
+    border: 'none',
+    borderRadius: '10px',
+    fontSize: '15px',
+    fontWeight: '600',
+    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)', // subtle red shadow
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
 
 }
 export default LeaveRequest;
