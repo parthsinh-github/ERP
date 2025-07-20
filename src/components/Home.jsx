@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useState, useCallback, useMemo } from 'react';
 import Layout from './shared/Layout';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
 
 // Lazy loaded components with error boundaries
 const HeroSection = lazy(() => import('./HeroSection'));
@@ -60,6 +61,7 @@ const Home = () => {
 
   return (
     <>
+    
       <style>{`
         .modern-home-container {
           min-height: 100vh;
@@ -597,6 +599,27 @@ const Home = () => {
           }
         }
       `}</style>
+
+   <Helmet>
+  <title>Home | Vidyaharti Trust College</title>
+  <meta name="description" content="Explore cutting-edge solutions and smart tools at Vidyaharti Trust College. Secure, fast, and AI-driven experiences designed for modern students and educators." />
+  <meta name="keywords" content="Vidyaharti Trust College, student portal, AI analytics, education platform, secure portal, fast loading, smart dashboard" />
+  <meta name="author" content="Vidyaharti Trust College" />
+  
+  {/* Open Graph for social sharing */}
+  <meta property="og:title" content="Vidyaharti Trust College - Smart Education Platform" />
+  <meta property="og:description" content="Discover powerful student tools and insights powered by modern web technologies." />
+  <meta property="og:image" content="https://example.com/thumbnail.jpg" />
+  <meta property="og:url" content="https://yourdomain.com/home" />
+  <meta property="og:type" content="website" />
+
+  {/* Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Vidyaharti Trust College - Smart Education Platform" />
+  <meta name="twitter:description" content="Secure, fast, and intelligent student tools." />
+  <meta name="twitter:image" content="https://example.com/thumbnail.jpg" />
+</Helmet>
+
 
       <div className="modern-home-container">
         <FloatingElements />

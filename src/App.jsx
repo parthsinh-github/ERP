@@ -1,5 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import SharedLayout from './layouts/SharedLayout';
 import Document from './components/Document';
 import Profile from './components/Profile';
@@ -17,14 +20,11 @@ const AllUsers = lazy(() => import('./components/AllUsers'));
 const appRouter = createBrowserRouter([
   { path: '/', element: <Login /> },
   { path: '/signup', element: <Signup /> },
-  
-
-  // ✅ Only this dynamic route — no hardcoded /student/:id etc.
   {
     path: '/:role/:id',
     element: <SharedLayout />,
     children: [
-      { index: true, element: <Home /> }, // This Home includes CardsSection
+      { index: true, element: <Home /> },
       { path: 'leaverequest', element: <LeaveRequest /> },
       { path: 'announcement', element: <Announcement /> },
       { path: 'exam', element: <Exam /> },
@@ -32,15 +32,18 @@ const appRouter = createBrowserRouter([
       { path: 'AllUsers', element: <AllUsers /> },
       { path: 'Document', element: <Document /> },
       { path: 'Profile', element: <Profile /> },
-    ]
+    ],
   },
 ]);
 
 function App() {
   return (
-    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading Page...</div>}>
-      <RouterProvider router={appRouter} />
-    </Suspense>
+    <>
+      <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading Page...</div>}>
+        <RouterProvider router={appRouter} />
+      </Suspense>
+      {/* Place ToastContainer here as well if needed for SSR/hydration-safe routes */}
+    </>
   );
 }
 

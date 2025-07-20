@@ -83,7 +83,7 @@ const Signup = () => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || 'OTP verification failed');
-
+        alert('OTP verified!');
 
       toast.success('OTP verified');
 
@@ -881,6 +881,192 @@ const Signup = () => {
             .card-header h2 {
               font-size: 1.5rem;
             }
+                  .form-input:focus,
+          .form-select:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+
+          .role-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+          }
+
+          .role-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .role-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #667eea;
+          }
+
+          .role-option input[type="radio"] {
+            accent-color: #667eea;
+          }
+
+          .role-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+          }
+
+          .role-icon {
+            font-size: 1rem;
+          }
+
+          .role-text {
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            font-weight: 500;
+          }
+
+          /* OTP Verification Styles */
+          .otp-verification-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+          }
+
+          .otp-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          }
+
+          .otp-icon {
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .otp-title {
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+          }
+
+          .verification-badge {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+          }
+
+          .otp-step {
+            margin-bottom: 1rem;
+          }
+
+          .otp-send-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+          }
+
+          .otp-send-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+          }
+
+          .otp-send-button:disabled {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            cursor: not-allowed;
+          }
+
+          .otp-send-button.sent {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          }
+
+          .otp-verification-step {
+            animation: slideInUp 0.4s ease-out;
+          }
+
+          .otp-input-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+          }
+
+          .otp-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #f1f5f9;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.25rem;
+            transition: all 0.3s ease;
+            outline: none;
+          }
+
+          .otp-input::placeholder {
+            color: #64748b;
+            letter-spacing: normal;
+            font-weight: 400;
+          }
+
+          .otp-input:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          }
+
+          .otp-verify-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            white-space: nowrap;
+          
           }
         `}</style>
     </>
