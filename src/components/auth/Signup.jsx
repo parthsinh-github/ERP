@@ -1,48 +1,51 @@
-  import React, { useState, useEffect } from 'react';
-  import { Link, useNavigate } from 'react-router-dom';
-  import { toast } from 'react-toastify';
-  import { useDispatch, useSelector } from 'react-redux';
-  import { setLoading, setUser } from '@/redux/authSlice';
-  import { USER_API_END_POINT } from '@/utils/constant';
-    
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoading, setUser } from '@/redux/authSlice';
+import { USER_API_END_POINT } from '@/utils/constant';
 
-  const Signup = () => {
-    const [input, setInput] = useState({
-      fullName: '',
-      email: '',
-      phoneNumber: '',
-      employeeId: '',
-      enrollmentNumber: '',
-      password: '',
-      secretKey: '',
-      role: 'student',
-      department: '',
-      address: '',
-      city: '',
-      pincode: '',
-      gender: '',
-      dateOfBirth: '',
-      otp:'',
-    });
 
-    const { loading } = useSelector((state) => state.auth);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    // 🔼 Add at the top inside your component
-const [otp, setOtp] = useState('');
-const [isOtpSent, setIsOtpSent] = useState(false);
+
+const Signup = () => {
+  const [input, setInput] = useState({
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    enrollmentNumber: '',
+    password: '',
+    secretKey: '',
+    role: 'student',
+    department: '',
+    address: '',
+    city: '',
+    pincode: '',
+    gender: '',
+    dateOfBirth: '',
+    stream: '',
+    batchYear: '',
+    division: '',
+    otp: '',
+  });
+
+  const { loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // 🔼 Add at the top inside your component
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
 
 
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setInput(prev => ({ ...prev, [name]: value }));
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInput(prev => ({ ...prev, [name]: value }));
+  };
 
-    const handleRoleChange = (e) => {
-      const { value } = e.target;
-      setInput(prev => ({ ...prev, role: value, secretKey: '' }));
-    };
+  const handleRoleChange = (e) => {
+    const { value } = e.target;
+    setInput(prev => ({ ...prev, role: value, secretKey: '' }));
+  };
 
   const handleSendOtp = async () => {
     if (!input.email) {
@@ -63,7 +66,6 @@ const [isOtpSent, setIsOtpSent] = useState(false);
       alert('OTP sent!');
       setIsOtpSent(true); // ✅ show OTP input & verify button
     } catch (err) {
-      console.error('Error sending OTP:', err.message);
       alert(err.message);
     }
   };
@@ -79,12 +81,15 @@ const [isOtpSent, setIsOtpSent] = useState(false);
       });
 
       const data = await res.json();
+
       if (!res.ok) throw new Error(data.message || 'OTP verification failed');
-      console.log("Otp verified");
-      
+
+
       toast.success('OTP verified');
 
-      
+      // ✅ Store verified OTP into input.otp so it's included in final registration
+      setInput((prev) => ({ ...prev, otp }));
+
       setIsOtpVerified(true);
     } catch (err) {
       console.error('OTP verification error:', err.message);
@@ -95,16 +100,17 @@ const [isOtpSent, setIsOtpSent] = useState(false);
 
 
 
-    const submitHandler = async (e) => {
-      e.preventDefault();
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
 
 
-      if (!input.gender) return toast.error('Gender is required');
+    if (!input.gender) return toast.error('Gender is required');
 
-      if ((input.role === 'admin' || input.role === 'faculty') && !input.secretKey) {
-        return toast.error('Secret key is required for admin/faculty');
-      }
-     
+    if ((input.role === 'admin' || input.role === 'faculty') && !input.secretKey) {
+      return toast.error('Secret key is required for admin/faculty');
+    }
+
     if (!isOtpVerified) {
       toast.error('Please verify OTP before submitting');
       return;
@@ -113,355 +119,415 @@ const [isOtpSent, setIsOtpSent] = useState(false);
 
     try {
 
-    dispatch(setLoading(true));
+      dispatch(setLoading(true));
 
-    const res = await fetch(`${USER_API_END_POINT}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include', // replaces axios's withCredentials: true
-      body: JSON.stringify(input)
-    });
+      const res = await fetch(`${USER_API_END_POINT}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include', // replaces axios's withCredentials: true
+        body: JSON.stringify(input)
+      });
 
-    const data = await res.json();
-    
-    if (res.ok && data.success) {
-      toast.success(data.message);
-      navigate('/'); // ✅ redirect to login after successful signup
-    } else {
-      toast.error(data.message || 'Signup failed');
+      const data = await res.json();
+
+
+      if (res.ok && data.success) {
+        toast.success(data.message);
+        navigate('/'); // ✅ redirect to login after successful signup
+      } else {
+        toast.error(data.message || 'Signup failed');
+      }
+    } catch (error) {
+
+      toast.error('Signup failed: ' + error.message);
+
+    } finally {
+      dispatch(setLoading(false));
     }
-    console.log("data is :",res);
-    
-  } catch (error) {
-    toast.error('Signup failed: ' + error.message);
-  } finally {
-    dispatch(setLoading(false));
-  }
 
-    };
 
-  
+  };
 
-    return (
-      <>
-        <div className="signup-container">
-          {/* Header with branding */}
-          <div className="signup-header">
-            <div className="header-brand">
-              <div className="logo-mini">
-                <span className="logo-emoji">🎓</span>
-              </div>
-              <div className="brand-info">
-                <h1>College ERP</h1>
-                <p>Join our academic community</p>
-              </div>
+
+
+  return (
+    <>
+      <div className="signup-container">
+        {/* Header with branding */}
+        <div className="signup-header">
+          <div className="header-brand">
+            <div className="logo-mini">
+              <span className="logo-emoji">🎓</span>
             </div>
-            <div className="header-decorations">
-              <span className="deco-icon deco-1">📚</span>
-              <span className="deco-icon deco-2">✨</span>
-              <span className="deco-icon deco-3">🌟</span>
+            <div className="brand-info">
+              <h1>College ERP</h1>
+              <p>Join our academic community</p>
             </div>
           </div>
-
-          {/* Main signup form */}
-          <div className="signup-main">
-            <div className="signup-card">
-              <div className="card-header">
-                <h2>Create Your Account</h2>
-                <p>Start your journey with College ERP</p>
-              </div>
-
-              <form className="signup-form" onSubmit={submitHandler}>
-                {/* Personal Information Section */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    <span className="section-icon">👤</span>
-                    Personal Information
-                  </h3>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Full Name</label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        placeholder="Enter your full name"
-                        value={input.fullName}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Email Address</label>
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        value={input.email}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Phone Number</label>
-                      <input
-                        type="text"
-                        name="phoneNumber"
-                        placeholder="Enter phone number"
-                        value={input.phoneNumber}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Date of Birth</label>
-                      <input
-                        type="date"
-                        name="dateOfBirth"
-                        value={input.dateOfBirth}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Gender</label>
-                      <select
-                        name="gender"
-                        value={input.gender}
-                        onChange={handleChange}
-                        required
-                        className="form-select"
-                      >
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Department</label>
-                      <input
-                        type="text"
-                        name="department"
-                        placeholder="Enter department"
-                        value={input.department}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Academic Information Section */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    <span className="section-icon">🎯</span>
-                    Academic Information
-                  </h3>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Employee ID</label>
-                      <input
-                        type="text"
-                        name="employeeId"
-                        placeholder="Enter employee ID"
-                        value={input.employeeId}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Enrollment Number</label>
-                      <input
-                        type="text"
-                        name="enrollmentNumber"
-                        placeholder="Enter enrollment number"
-                        value={input.enrollmentNumber}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Role</label>
-                    <div className="role-selection">
-                      <label className="role-option">
-                        <input
-                          type="radio"
-                          name="role"
-                          value="student"
-                          checked={input.role === 'student'}
-                          onChange={handleRoleChange}
-                        />
-                        <span className="role-content">
-                          <span className="role-icon">🎓</span>
-                          <span className="role-text">Student</span>
-                        </span>
-                      </label>
-                      <label className="role-option">
-                        <input
-                          type="radio"
-                          name="role"
-                          value="faculty"
-                          checked={input.role === 'faculty'}
-                          onChange={handleRoleChange}
-                        />
-                        <span className="role-content">
-                          <span className="role-icon">👨‍🏫</span>
-                          <span className="role-text">Faculty</span>
-                        </span>
-                      </label>
-                      <label className="role-option">
-                        <input
-                          type="radio"
-                          name="role"
-                          value="admin"
-                          checked={input.role === 'admin'}
-                          onChange={handleRoleChange}
-                        />
-                        <span className="role-content">
-                          <span className="role-icon">👩‍💼</span>
-                          <span className="role-text">Admin</span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {(input.role === 'admin' || input.role === 'faculty') && (
-                    <div className="form-group">
-                      <label className="form-label">Secret Key</label>
-                      <input
-                        type="text"
-                        name="secretKey"
-                        placeholder="Enter secret key"
-                        value={input.secretKey}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Address Information Section */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    <span className="section-icon">🏠</span>
-                    Address Information
-                  </h3>
-                  <div className="form-group">
-                    <label className="form-label">Address</label>
-                    <input
-                      type="text"
-                      name="address"
-                      placeholder="Enter your address"
-                      value={input.address}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                    />
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">City</label>
-                      <input
-                        type="text"
-                        name="city"
-                        placeholder="Enter city"
-                        value={input.city}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Pincode</label>
-                      <input
-                        type="text"
-                        name="pincode"
-                        placeholder="Enter pincode"
-                        value={input.pincode}
-                        onChange={handleChange}
-                        required
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Security Section */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    <span className="section-icon">🔐</span>
-                    Security
-                  </h3>
-                  <div className="form-group">
-                    <label className="form-label">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Create a strong password"
-                      value={input.password}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                    />
-                    <button type="button" onClick={handleSendOtp}>Send OTP</button>
-
-{isOtpSent && (
-  <>
-    <input
-      type="text"
-      placeholder="Enter OTP"
-      value={input.password}
-       className="form-input"
-      onChange={(e) => setOtp(e.target.value)}
-    />
-    <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
-  </>
-)}
-
-                  </div>
-                </div>
-
-                <button className="signup-button" type="submit" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <span className="spinner"></span>
-                      Creating Account...
-                    </>
-                  ) : (
-                    <>
-                      <span>Create Account</span>
-                      <span className="button-arrow">→</span>
-                    </>
-                  )}
-                </button>
-
-                <p className="login-link">
-                  Already have an account? <Link to="/">Sign In</Link>
-                </p>
-              </form>
-            </div>
+          <div className="header-decorations">
+            <span className="deco-icon deco-1">📚</span>
+            <span className="deco-icon deco-2">✨</span>
+            <span className="deco-icon deco-3">🌟</span>
           </div>
         </div>
 
-        <style>{`
+        {/* Main signup form */}
+        <div className="signup-main">
+          <div className="signup-card">
+            <div className="card-header">
+              <h2>Create Your Account</h2>
+              <p>Start your journey with College ERP</p>
+            </div>
+
+            <form className="signup-form" onSubmit={submitHandler}>
+              {/* Personal Information Section */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <span className="section-icon">👤</span>
+                  Personal Information
+                </h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Full Name</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      placeholder="Enter your full name"
+                      value={input.fullName}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Enter your email"
+                      value={input.email}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Phone Number</label>
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      placeholder="Enter phone number"
+                      value={input.phoneNumber}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Date of Birth</label>
+                    <input
+                      type="date"
+                      name="dateOfBirth"
+                      value={input.dateOfBirth}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Gender</label>
+                    <select
+                      name="gender"
+                      value={input.gender}
+                      onChange={handleChange}
+                      required
+                      className="form-select"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Department</label>
+                    <select
+                      name="department"
+                      value={input.department}
+                      onChange={handleChange}
+                      required
+                      className="form-select border rounded p-2 w-full"
+                    >
+                      <option value="">Select Department</option>
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Information Technology">Information Technology</option>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Mechanical">Mechanical</option>
+                      <option value="Civil">Civil</option>
+                      <option value="Electrical">Electrical</option>
+                      <option value="Business Administration">Business Administration</option>
+                      <option value="Commerce">Commerce</option>
+                      <option value="Arts">Arts</option>
+                      <option value="Science">Science</option>
+                      <option value="Other">Other</option>
+                    </select>
+
+
+                  </div>
+                </div>
+              </div>
+
+              {/* Academic Information Section */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <span className="section-icon">🎯</span>
+                  Academic Information
+                </h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Stream </label>
+                    <select
+                      name="stream"
+                      value={input.stream}
+                      onChange={handleChange}
+                      required
+                      className="form-select border rounded p-2 w-full"
+                    >
+                      <option value="">Select Stream</option>
+                      <option value="BBA">BBA</option>
+                      <option value="BCA">BCA</option>
+                      <option value="BTECH">BTECH</option>
+                      <option value="BCOM">BCOM</option>
+                      <option value="MCA">MCA</option>
+                      <option value="MBA">MBA</option>
+                      <option value="OTHER">OTHER</option>
+                    </select>
+
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">batchYear</label>
+                    <select
+                      name="batchYear"
+                      value={input.batchYear}
+                      onChange={handleChange}
+                      required
+                      className="form-select border rounded p-2 w-full"
+                    >
+                      <option value="">Select Batch Year</option>
+                      <option value="2023">2023</option>
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>
+                      <option value="2026">2026</option>
+                      <option value="2027">2027</option>
+                    </select>
+
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Division</label>
+                    <select
+                      name="division"
+                      value={input.division}
+                      onChange={handleChange}
+                      required
+                      className="form-select border rounded p-2 w-full"
+                    >
+                      <option value="">Select Division</option>
+                      <option value="Div-1">Div-1</option>
+                      <option value="Div-2">Div-2</option>
+                      <option value="Div-3">Div-3</option>
+                      <option value="Div-4">Div-4</option>
+                      <option value="Div-5">Div-5</option>
+                    </select>
+
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Enrollment Number</label>
+                    <input
+                      type="text"
+                      name="enrollmentNumber"
+                      placeholder="Enter enrollment number"
+                      value={input.enrollmentNumber}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Role</label>
+                  <div className="role-selection">
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="student"
+                        checked={input.role === 'student'}
+                        onChange={handleRoleChange}
+                      />
+                      <span className="role-content">
+                        <span className="role-icon">🎓</span>
+                        <span className="role-text">Student</span>
+                      </span>
+                    </label>
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="faculty"
+                        checked={input.role === 'faculty'}
+                        onChange={handleRoleChange}
+                      />
+                      <span className="role-content">
+                        <span className="role-icon">👨‍🏫</span>
+                        <span className="role-text">Faculty</span>
+                      </span>
+                    </label>
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="admin"
+                        checked={input.role === 'admin'}
+                        onChange={handleRoleChange}
+                      />
+                      <span className="role-content">
+                        <span className="role-icon">👩‍💼</span>
+                        <span className="role-text">Admin</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {(input.role === 'admin' || input.role === 'faculty') && (
+                  <div className="form-group">
+                    <label className="form-label">Secret Key</label>
+                    <input
+                      type="text"
+                      name="secretKey"
+                      placeholder="Enter secret key"
+                      value={input.secretKey}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Address Information Section */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <span className="section-icon">🏠</span>
+                  Address Information
+                </h3>
+                <div className="form-group">
+                  <label className="form-label">Address</label>
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Enter your address"
+                    value={input.address}
+                    onChange={handleChange}
+                    required
+                    className="form-input"
+                  />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">City</label>
+                    <input
+                      type="text"
+                      name="city"
+                      placeholder="Enter city"
+                      value={input.city}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Pincode</label>
+                    <input
+                      type="text"
+                      name="pincode"
+                      placeholder="Enter pincode"
+                      value={input.pincode}
+                      onChange={handleChange}
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Section */}
+              <div className="form-section">
+                <h3 className="section-title">
+                  <span className="section-icon">🔐</span>
+                  Security
+                </h3>
+                <div className="form-group">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Create a strong password"
+                    value={input.password}
+                    onChange={handleChange}
+                    required
+                    className="form-input"
+                  />
+                  <button type="button" onClick={handleSendOtp}>Send OTP</button>
+
+                  {isOtpSent && (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Enter OTP"
+                        value={otp}
+                        className="form-input"
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+
+                      <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
+                    </>
+                  )}
+
+                </div>
+              </div>
+
+              <button className="signup-button" type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="spinner"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <span>Create Account</span>
+                    <span className="button-arrow">→</span>
+                  </>
+                )}
+              </button>
+
+              <p className="login-link">
+                Already have an account? <Link to="/">Sign In</Link>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
           * {
             margin: 0;
             padding: 0;
@@ -817,8 +883,8 @@ const [isOtpSent, setIsOtpSent] = useState(false);
             }
           }
         `}</style>
-      </>
-    );
-  };
+    </>
+  );
+};
 
-  export default Signup;
+export default Signup;
