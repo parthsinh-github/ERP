@@ -121,7 +121,7 @@ const Signup = () => {
 
       dispatch(setLoading(true));
 
-      const res = await fetch(`${USER_API_END_POINT}/login`, {
+      const res = await fetch(`${USER_API_END_POINT}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
