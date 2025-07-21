@@ -4,14 +4,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, X, Calendar, User, Plus, Bell } from 'lucide-react';
 import useGetAllAnnouncement from '../hooks/useGetAllAnnouncement';
 
+import { ANNOUNCEMENT_API_END_POINT } from '@/utils/constant';
+
 const Announcement = () => {
   useGetAllAnnouncement();
 
   const { role, id } = useParams();
   const navigate = useNavigate();
   const { allAnnouncement, searchedQuery } = useSelector(state => state.announcement);
- 
-    
 
   const { user } = useSelector(state => state.auth);
 
@@ -42,7 +42,7 @@ const Announcement = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/v1/announcement/${id}`, {
+      const response = await fetch(`${ANNOUNCEMENT_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,6 +55,8 @@ const Announcement = () => {
       });
 
       const data = await response.json();
+      console.log("Dtaa  : ",data);
+      
       if (response.ok) {
         alert('✅ Announcement added!');
         setFormData({ title: '', description: '', date: '' });
@@ -161,7 +163,7 @@ const Announcement = () => {
                   </div>
                   <div style={styles.meta}>
                     <User size={16} style={{ marginRight: '6px' }} />
-                    <span>{item.createdBy?._id || 'Admin'}</span>
+                    <span>{item.createdBy?.fullName || 'Admin'}</span>
                   </div>
                 </div>
               </div>

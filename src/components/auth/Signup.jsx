@@ -486,23 +486,31 @@ const Signup = () => {
                     required
                     className="form-input"
                   />
-                  <button type="button" onClick={handleSendOtp}>Send OTP</button>
+                    <button className="send-otp-btn" onClick={handleSendOtp} disabled={loading}>
+        {loading ? <div className="spinner"></div> : 'Send OTP'}
+      </button>
 
-                  {isOtpSent && (
-                    <>
-                      <input
-                        type="text"
-                        placeholder="Enter OTP"
-                        value={otp}
-                        className="form-input"
-                        onChange={(e) => setOtp(e.target.value)}
-                      />
+  {isOtpSent && (
+  <div className="otp-section">
+    <label htmlFor="otp" className="otp-label">Enter the OTP sent to your email</label>
+    <input
+      id="otp"
+      type="text"
+      className="otp-input"
+      placeholder="6-digit OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+      maxLength={6}
+    />
+    <button className="otp-verify-btn" onClick={handleVerifyOtp}>
+      Verify OTP
+    </button>
+  </div>
+)}
 
-                      <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
-                    </>
-                  )}
 
-                </div>
+      {isOtpVerified }
+    </div>
               </div>
 
               <button className="signup-button" type="submit" disabled={loading}>
@@ -533,6 +541,122 @@ const Signup = () => {
             padding: 0;
             box-sizing: border-box;
           }
+        .otp-form-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.otp-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.otp-section {
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px solid #dadada;
+  border-radius: 10px;
+  background-color: #fafafa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.otp-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #333;
+}
+
+.otp-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.3s;
+  box-sizing: border-box;
+}
+
+.otp-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.otp-verify-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.otp-verify-btn:hover {
+  background-color: #218838;
+}
+
+.otp-form-container input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.send-otp-btn,
+.verify-btn {
+  width: 100%;
+  padding: 10px;
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.send-otp-btn:disabled {
+  background-color: #7ca8e7;
+  cursor: not-allowed;
+}
+
+.otp-box {
+  margin-top: 20px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #fff;
+  border-bottom: 4px solid #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.verified-text {
+  color: green;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+}
 
           .signup-container {
             min-height: 100vh;

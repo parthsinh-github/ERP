@@ -615,7 +615,7 @@ const Home = () => {
 
   {/* Twitter Card */}
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Vidyaharti Trust College - Smart Education Platform" />
+  <meta name="twitter:title" content="Collage ERP - Smart Education Platform" />
   <meta name="twitter:description" content="Secure, fast, and intelligent student tools." />
   <meta name="twitter:image" content="https://example.com/thumbnail.jpg" />
 </Helmet>
