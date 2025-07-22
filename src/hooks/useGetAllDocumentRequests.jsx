@@ -19,7 +19,7 @@ const useGetAllDocumentRequests = () => {
   
       try {
         dispatch(setLoading());
-        const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
+       const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
           credentials: 'include', // in case cookies or token
         });
         const data = await res.json();

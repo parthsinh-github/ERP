@@ -215,17 +215,28 @@ const CreateDocumentDialog = ({ id, onClose }) => {
           <button style={styles.closeBtn} onClick={onClose}>×</button>
         </div>
         
-        <div style={styles.form} onSubmit={submitHandler}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Document Type *</label>
-            <input 
-              name="documentType" 
-              placeholder="e.g., Transcript, Certificate, ID Card"
-              required 
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
+       <div style={styles.form} onSubmit={submitHandler}>
+  <div style={styles.formGroup}>
+    <label style={styles.label}>Document Type *</label>
+    <select 
+      name="documentType" 
+      required 
+      onChange={handleChange}
+      style={styles.input}
+    >
+      <option value="">-- Select Document Type --</option>
+      <option value="Bonafide">Bonafide</option>
+      <option value="Character Certificate">Character Certificate</option>
+      <option value="Leaving Certificate">Leaving Certificate</option>
+      <option value="Marksheets">Marksheets</option>
+      <option value="Caste Certificate">Caste Certificate</option>
+      <option value="Transfer Certificate">Transfer Certificate</option>
+      <option value="Fee Structure">Fee Structure</option>
+      <option value="Migration Certificate">Migration Certificate</option>
+      <option value="Scholarship Letter">Scholarship Letter</option>
+    </select>
+  </div>
+
           
           <div style={styles.formGroup}>
             <label style={styles.label}>Reason *</label>
@@ -238,13 +249,16 @@ const CreateDocumentDialog = ({ id, onClose }) => {
             />
           </div>
           
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Delivery Mode</label>
-            <select name="deliveryMode" onChange={handleChange} style={styles.select}>
-              <option value="email">Email</option>
-              <option value="print">Printed Copy</option>
-            </select>
-          </div>
+        <div style={styles.formGroup}>
+  <label style={styles.label}>Delivery Mode</label>
+  <select name="deliveryMode" onChange={handleChange} style={styles.select}>
+    <option value="">-- Select Delivery Mode --</option>
+    <option value="physical">Physical</option>
+    <option value="email">Email</option>
+    <option value="both">Both</option>
+  </select>
+</div>
+
           
           <div style={styles.formGroup}>
             <label style={styles.label}>Delivery Email</label>

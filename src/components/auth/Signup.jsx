@@ -514,7 +514,7 @@ const Signup = () => {
               <button className="signup-button" type="submit" disabled={loading}>
                 {loading ? (
                   <>
-                    <span className="spinner"></span>
+                    {/* <span className="spinner"></span> */}
                     Creating Account...
                   </>
                 ) : (
