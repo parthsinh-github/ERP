@@ -2,7 +2,7 @@ import React from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../components/ui/button';
 import { Avatar, AvatarImage } from '../components/ui/avatar';
-import { LogOut, User2, Bell } from 'lucide-react'; // Added Bell icon for notice
+import { LogOut, User2, Bell } from 'lucide-react'; 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 const Navbar = () => {
 
-  const { role, id } = useParams(); // get dynamic params
+  const { role, id } = useParams(); 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,15 +25,14 @@ const Navbar = () => {
     }
   };
 
-  // Logout handler to clear user data and redirect
   const logoutHandler = async () => {
     try {
       const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
 
       if (res.data.success) {
-        dispatch(setUser(null)); // Clear user data from Redux
-        navigate('/'); // Redirect to home or login page
-        toast.success(res.data.message); // Display success message
+        dispatch(setUser(null)); 
+        navigate('/'); 
+        toast.success(res.data.message); 
       } else {
         toast.error("Logout failed. Please try again.");
       }

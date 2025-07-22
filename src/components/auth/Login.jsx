@@ -41,9 +41,10 @@ const Login = () => {
 
         const { user, token } = data;
 
-        dispatch(loginSuccess({ user, token })); // ✅ set both user and token in redux
+        dispatch(loginSuccess({ user, token })); 
 
-        const route = `/${user.role}/${user._id}`; // ✅ dynamic role-based route
+        const route = `/${user.role}/${user._id}`; 
+        
         navigate(route);
       } else {
         toast.error(data.message || 'Login failed');

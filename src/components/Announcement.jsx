@@ -250,7 +250,7 @@ const Announcement = () => {
                 </div>
                 <div style={styles.metaItem}>
                   <User size={16} style={{ marginRight: '6px' }} />
-                  <span>By: {selectedAnnouncement.createdBy?._id || 'Admin'}</span>
+                  <span>By: {selectedAnnouncement.createdBy?.fullName || 'Admin'}</span>
                 </div>
               </div>
               <div style={styles.announcementContent}>

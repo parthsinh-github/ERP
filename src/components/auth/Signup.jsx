@@ -31,7 +31,6 @@ const Signup = () => {
   const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // 🔼 Add at the top inside your component
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
@@ -64,7 +63,7 @@ const Signup = () => {
       if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
 
       alert('OTP sent!');
-      setIsOtpSent(true); // ✅ show OTP input & verify button
+      setIsOtpSent(true); 
     } catch (err) {
       alert(err.message);
     }
@@ -87,7 +86,6 @@ const Signup = () => {
 
       toast.success('OTP verified');
 
-      // ✅ Store verified OTP into input.otp so it's included in final registration
       setInput((prev) => ({ ...prev, otp }));
 
       setIsOtpVerified(true);
@@ -126,7 +124,7 @@ const Signup = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include', // replaces axios's withCredentials: true
+        credentials: 'include', 
         body: JSON.stringify(input)
       });
 
@@ -135,7 +133,7 @@ const Signup = () => {
 
       if (res.ok && data.success) {
         toast.success(data.message);
-        navigate('/'); // ✅ redirect to login after successful signup
+        navigate('/'); 
       } else {
         toast.error(data.message || 'Signup failed');
       }

@@ -7,3 +7,4 @@ export const ID_CARD_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/
 export const EXAM_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/exam";
 export const REPORT_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/report";
 export const APPLICATION_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/student";
+export const DOCUMENT_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/document";

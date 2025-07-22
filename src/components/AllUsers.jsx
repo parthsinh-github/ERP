@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
 import { useSelector } from 'react-redux';
 import useGetAllUsers from '../hooks/useGetAllUsers';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,7 +20,7 @@ const AllUsers = () => {
   const fetchUsers = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/v1/users/all', {
-        credentials: 'include', // if your API requires cookies/session
+        credentials: 'include', 
         headers: {
           'Content-Type': 'application/json',
         },
@@ -60,7 +59,6 @@ const AllUsers = () => {
    
 
   const renderUsers = () => {
-    // Check if user role is admin or faculty, if so show all users
     if (user?.role === 'admin' || user?.role === 'faculty') {
       return (
         <>
@@ -113,7 +111,6 @@ const AllUsers = () => {
       );
     }
 
-    // If role is student, only show student users
     if (user?.role === 'student') {
       return (
         <div className="user-section">

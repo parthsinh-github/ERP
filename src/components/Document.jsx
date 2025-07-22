@@ -2,22 +2,27 @@ import React, { useState } from 'react';
 import { CheckCircle, XCircle, Clock, Plus, FileText, User, Phone, Mail, Calendar, Package } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import useGetAllDocumentRequests from '../hooks/useGetAllDocumentRequests';
+
+import { DOCUMENT_API_END_POINT } from '@/utils/constant';
 
 
-const useGetAllDocumentRequests = () => {};
 
 const Document = () => {
   const { role, id } = useParams();
   const { allRequests } = useSelector((state) => state.document);
+   const refreshdocument = useGetAllDocumentRequests();
   const { user } = useSelector((state) => state.auth);
+    console.log("All user : ", user);
+    console.log("All requests : ", refreshdocument);
+    
 
   const [showDialog, setShowDialog] = useState(false);
 
   useGetAllDocumentRequests();
-
   const handleAction = async (requestId, status) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/document/${id}/${requestId}`, {
+      const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -180,13 +185,15 @@ const CreateDocumentDialog = ({ id, onClose }) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/document/${id}`, {
+       const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
+      console.log("Dara : ", data);
+      
 
       if (res.ok) {
         alert('✅ Request created');
