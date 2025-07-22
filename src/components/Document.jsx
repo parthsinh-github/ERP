@@ -11,10 +11,9 @@ import { DOCUMENT_API_END_POINT } from '@/utils/constant';
 const Document = () => {
   const { role, id } = useParams();
   const { allRequests } = useSelector((state) => state.document);
-   const refreshdocument = useGetAllDocumentRequests();
+   useGetAllDocumentRequests();
   const { user } = useSelector((state) => state.auth);
-    console.log("All user : ", user);
-    console.log("All requests : ", refreshdocument);
+
     
 
   const [showDialog, setShowDialog] = useState(false);

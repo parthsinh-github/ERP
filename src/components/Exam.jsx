@@ -1,45 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, BookOpen, Calendar, Clock, GraduationCap, Building, User, FileText, Timer } from 'lucide-react';
 
-// Mock hooks for demonstration
-const useSelector = (selector) => {
-  const mockState = {
-    auth: { user: { role: 'admin' } },
-    exam: { 
-      allExam: [
-        {
-          _id: '1',
-          title: 'Mid-Term Examination',
-          subject: 'Computer Science',
-          department: 'Information Technology',
-          date: '2024-03-15',
-          startTime: '09:00 AM',
-          endTime: '12:00 PM',
-          semester: 6,
-          examType: 'Written',
-          createdBy: { email: 'admin@university.edu' }
-        },
-        {
-          _id: '2',
-          title: 'Final Examination',
-          subject: 'Database Management',
-          department: 'Computer Science',
-          date: '2024-03-20',
-          startTime: '10:00 AM',
-          endTime: '01:00 PM',
-          semester: 4,
-          examType: 'Practical',
-          createdBy: { email: 'faculty@university.edu' }
-        }
-      ]
-    }
-  };
-  return selector(mockState);
-};
 
-const useParams = () => ({ role: 'admin', id: '123' });
-const useGetAllExam = () => {};
-const useNavigate = () => (path) => console.log('Navigate to:', path);
+import useGetAllExam from '../hooks/useGetAllExam';
+
+import { EXAM_API_END_POINT } from '@/utils/constant';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Exam = () => {
   useGetAllExam();
@@ -47,6 +14,8 @@ const Exam = () => {
   
   const { role, id } = useParams();
   const { user } = useSelector((state) => state.auth);
+  console.log("User : ",user);
+  
   const { allExam } = useSelector(store => store.exam);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,7 +39,7 @@ const Exam = () => {
   const handleCreateExam = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/v1/exam/create', {
+const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,6 +49,8 @@ const Exam = () => {
       });
 
       const data = await res.json();
+      console.log("Data : ",data);
+      
 
       if (data.success) {
         alert('✅ Exam created successfully!');
@@ -191,23 +162,27 @@ const Exam = () => {
                   />
                 </div>
 
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>
-                    <BookOpen size={16} />
-                    Exam Type *
-                  </label>
-                  <input
-                    type="text"
-                    name="examType"
-                    placeholder="e.g., Written, Practical, Oral"
-                    value={formData.examType}
-                    onChange={handleInputChange}
-                    required
-                    style={styles.input}
-                  />
-                </div>
-
-                <div style={styles.formGroup}>
+            
+<div style={styles.formGroup}>
+  <label style={styles.label}>
+    <BookOpen size={16} />
+    Exam Type *
+  </label>
+  <select
+    name="examType"
+    value={formData.examType}
+    onChange={handleInputChange}
+    required
+    style={styles.input}
+  >
+    <option value="">Select Exam Type</option>
+    <option value="Midterm">Midterm</option>
+    <option value="Final">Final</option>
+    <option value="Unit Test">Unit Test</option>
+    <option value="Practical">Practical</option>
+  </select>
+</div>
+      <div style={styles.formGroup}>
                   <label style={styles.label}>
                     <Calendar size={16} />
                     Exam Date *
@@ -221,6 +196,7 @@ const Exam = () => {
                     style={styles.input}
                   />
                 </div>
+
 
                 <div style={styles.formGroup}>
                   <label style={styles.label}>
@@ -255,38 +231,54 @@ const Exam = () => {
                 </div>
 
                 <div style={styles.formGroup}>
-                  <label style={styles.label}>
-                    <Building size={16} />
-                    Department *
-                  </label>
-                  <input
-                    type="text"
-                    name="department"
-                    placeholder="e.g., Computer Science"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    required
-                    style={styles.input}
-                  />
-                </div>
+  <label style={styles.label}>
+    <Building size={16} />
+    Department *
+  </label>
+  <select
+    name="department"
+    value={formData.department}
+    onChange={handleInputChange}
+    required
+    style={styles.input}
+  >
+    <option value="">Select Department</option>
+    <option value="Computer Science">Computer Science</option>
+    <option value="Information Technology">Information Technology</option>
+    <option value="Electronics">Electronics</option>
+    <option value="Mechanical">Mechanical</option>
+    <option value="Civil">Civil</option>
+    <option value="Electrical">Electrical</option>
+    <option value="Business Administration">Business Administration</option>
+    <option value="Commerce">Commerce</option>
+    <option value="Arts">Arts</option>
+    <option value="Science">Science</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
 
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>
-                    <GraduationCap size={16} />
-                    Semester *
-                  </label>
-                  <input
-                    type="number"
-                    name="semester"
-                    placeholder="e.g., 6"
-                    value={formData.semester}
-                    onChange={handleInputChange}
-                    required
-                    style={styles.input}
-                    min="1"
-                    max="10"
-                  />
-                </div>
+
+              <div style={styles.formGroup}>
+  <label style={styles.label}>
+    <Calendar size={16} />
+    Semester *
+  </label>
+  <select
+    name="semester"
+    value={formData.semester}
+    onChange={handleInputChange}
+    required
+    style={styles.input}
+  >
+    <option value="">Select Semester</option>
+    {[1, 2, 3, 4, 5, 6].map((sem) => (
+      <option key={sem} value={sem}>
+        {sem}
+      </option>
+    ))}
+  </select>
+</div>
+
 
                 <div style={styles.formGroup}>
                   <label style={styles.label}>
@@ -304,21 +296,7 @@ const Exam = () => {
                   />
                 </div>
 
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>
-                    <User size={16} />
-                    Created By (User ID) *
-                  </label>
-                  <input
-                    type="text"
-                    name="createdBy"
-                    placeholder="Enter user ID"
-                    value={formData.createdBy}
-                    onChange={handleInputChange}
-                    required
-                    style={styles.input}
-                  />
-                </div>
+            
               </div>
 
               <div style={styles.modalActions}>
@@ -423,7 +401,7 @@ const styles = {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     color: '#ffffff',
     padding: '10px 16px',
-    border: 'none',
+   
     borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '14px',
