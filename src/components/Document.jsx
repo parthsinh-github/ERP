@@ -11,10 +11,10 @@ import { DOCUMENT_API_END_POINT } from '@/utils/constant';
 const Document = () => {
   const { role, id } = useParams();
   const { allRequests } = useSelector((state) => state.document);
-   useGetAllDocumentRequests();
+  useGetAllDocumentRequests();
   const { user } = useSelector((state) => state.auth);
 
-    
+
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -61,13 +61,14 @@ const Document = () => {
             </span>
           </div>
         </div>
-        
-        {user?.role === 'student' && (
-          <button style={styles.createBtn} onClick={() => setShowDialog(true)}>
-            <Plus size={18} />
-            Create New Request
-          </button>
-        )}
+
+        {role === 'student' && (
+  <button style={styles.createBtn} onClick={() => setShowDialog(true)}>
+    <Plus size={18} />
+    Create New Request
+  </button>
+)}
+
       </div>
 
       {showDialog && <CreateDocumentDialog id={id} onClose={() => setShowDialog(false)} />}
@@ -77,8 +78,8 @@ const Document = () => {
           <FileText size={64} style={styles.emptyIcon} />
           <h3 style={styles.emptyTitle}>No document requests found</h3>
           <p style={styles.emptyText}>
-            {user?.role === 'student' 
-              ? 'Create your first document request to get started' 
+            {user?.role === 'student'
+              ? 'Create your first document request to get started'
               : 'Students haven\'t submitted any requests yet'}
           </p>
         </div>
@@ -92,72 +93,82 @@ const Document = () => {
                   {req.status.toUpperCase()}
                 </div>
               </div>
-              
+
               <div style={styles.cardContent}>
                 <div style={styles.infoRow}>
                   <FileText size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Reason:</span>
                   <span style={styles.infoValue}>{req.reason}</span>
                 </div>
-                
+
                 <div style={styles.infoRow}>
                   <User size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Student:</span>
                   <span style={styles.infoValue}>{req.student?.fullName}</span>
                 </div>
-                
+
                 <div style={styles.infoRow}>
                   <Phone size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Contact:</span>
-                  <span style={styles.infoValue}>{req.contactNumber}</span>
+                  <span style={styles.infoValue}>{req.student?.phoneNumber}</span>
                 </div>
-                
+
                 <div style={styles.infoRow}>
                   <Mail size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Email:</span>
-                  <span style={styles.infoValue}>{req.deliveryEmail || 'N/A'}</span>
+                  <span style={styles.infoValue}>{req.student?.email || 'N/A'}</span>
                 </div>
-                
-                <div style={styles.infoRow}>
+
+                {/* <div style={styles.infoRow}>
                   <Package size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Delivery:</span>
                   <span style={styles.infoValue}>{req.deliveryMode}</span>
-                </div>
-                
+                </div> */}
+
                 <div style={styles.infoRow}>
                   <Calendar size={16} style={styles.infoIcon} />
                   <span style={styles.infoLabel}>Need by:</span>
                   <span style={styles.infoValue}>
-                    {req.expectedNeedDate ? new Date(req.expectedNeedDate).toDateString() : 'Not mentioned'}
+                    {req?.expectedNeedDate
+                      ? new Date(req.expectedNeedDate).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })
+                      : 'Not mentioned'}
+
+
+
                   </span>
                 </div>
               </div>
 
-              <div style={styles.cardActions}>
-                {req.status === 'pending' ? (
-                  <div style={styles.actionButtons}>
-                    <button
-                      style={styles.approveBtn}
-                      onClick={() => handleAction(req._id, 'approved')}
-                    >
-                      <CheckCircle size={16} />
-                      Approve
-                    </button>
-                    <button
-                      style={styles.rejectBtn}
-                      onClick={() => handleAction(req._id, 'rejected')}
-                    >
-                      <XCircle size={16} />
-                      Reject
-                    </button>
-                  </div>
-                ) : (
-                  <div style={styles.readOnlyStatus}>
-                    <Clock size={16} />
-                    Action completed
-                  </div>
-                )}
-              </div>
+          <div style={styles.cardActions}>
+  {req.status === 'pending' && role === 'admin' ? (
+    <div style={styles.actionButtons}>
+      <button
+        style={styles.approveBtn}
+        onClick={() => handleAction(req._id, 'approved')}
+      >
+        <CheckCircle size={16} />
+        Approve
+      </button>
+      <button
+        style={styles.rejectBtn}
+        onClick={() => handleAction(req._id, 'rejected')}
+      >
+        <XCircle size={16} />
+        Reject
+      </button>
+    </div>
+  ) : (
+    <div style={styles.readOnlyStatus}>
+      {/* <Clock size={16} />
+      Action completed */}
+    </div>
+  )}
+</div>
+
             </div>
           ))}
         </div>
@@ -184,20 +195,20 @@ const CreateDocumentDialog = ({ id, onClose }) => {
     e.preventDefault();
 
     try {
-       const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
+      const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
-      console.log("Dara : ", data);
-      
+
 
       if (res.ok) {
         alert('✅ Request created');
+
         onClose();
-        window.location.reload();
+
       } else {
         alert('❌ Failed to create: ' + data.error);
       }
@@ -213,42 +224,42 @@ const CreateDocumentDialog = ({ id, onClose }) => {
           <h3 style={styles.dialogTitle}>Create Document Request</h3>
           <button style={styles.closeBtn} onClick={onClose}>×</button>
         </div>
-        
-       <div style={styles.form} onSubmit={submitHandler}>
-  <div style={styles.formGroup}>
-    <label style={styles.label}>Document Type *</label>
-    <select 
-      name="documentType" 
-      required 
-      onChange={handleChange}
-      style={styles.input}
-    >
-      <option value="">-- Select Document Type --</option>
-      <option value="Bonafide">Bonafide</option>
-      <option value="Character Certificate">Character Certificate</option>
-      <option value="Leaving Certificate">Leaving Certificate</option>
-      <option value="Marksheets">Marksheets</option>
-      <option value="Caste Certificate">Caste Certificate</option>
-      <option value="Transfer Certificate">Transfer Certificate</option>
-      <option value="Fee Structure">Fee Structure</option>
-      <option value="Migration Certificate">Migration Certificate</option>
-      <option value="Scholarship Letter">Scholarship Letter</option>
-    </select>
-  </div>
 
-          
+        <div style={styles.form} onSubmit={submitHandler}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Document Type *</label>
+            <select
+              name="documentType"
+              required
+              onChange={handleChange}
+              style={styles.input}
+            >
+              <option value="">-- Select Document Type --</option>
+              <option value="Bonafide">Bonafide</option>
+              <option value="Character Certificate">Character Certificate</option>
+              <option value="Leaving Certificate">Leaving Certificate</option>
+              <option value="Marksheets">Marksheets</option>
+              <option value="Caste Certificate">Caste Certificate</option>
+              <option value="Transfer Certificate">Transfer Certificate</option>
+              <option value="Fee Structure">Fee Structure</option>
+              <option value="Migration Certificate">Migration Certificate</option>
+              <option value="Scholarship Letter">Scholarship Letter</option>
+            </select>
+          </div>
+
+
           <div style={styles.formGroup}>
             <label style={styles.label}>Reason *</label>
-            <input 
-              name="reason" 
+            <input
+              name="reason"
               placeholder="Purpose for requesting this document"
-              required 
+              required
               onChange={handleChange}
               style={styles.input}
             />
           </div>
-          
-        <div style={styles.formGroup}>
+
+          {/* <div style={styles.formGroup}>
   <label style={styles.label}>Delivery Mode</label>
   <select name="deliveryMode" onChange={handleChange} style={styles.select}>
     <option value="">-- Select Delivery Mode --</option>
@@ -256,10 +267,10 @@ const CreateDocumentDialog = ({ id, onClose }) => {
     <option value="email">Email</option>
     <option value="both">Both</option>
   </select>
-</div>
+</div> */}
 
-          
-          <div style={styles.formGroup}>
+
+          {/* <div style={styles.formGroup}>
             <label style={styles.label}>Delivery Email</label>
             <input 
               name="deliveryEmail" 
@@ -268,9 +279,9 @@ const CreateDocumentDialog = ({ id, onClose }) => {
               onChange={handleChange}
               style={styles.input}
             />
-          </div>
-          
-          <div style={styles.formGroup}>
+          </div> */}
+
+          {/* <div style={styles.formGroup}>
             <label style={styles.label}>Contact Number *</label>
             <input 
               name="contactNumber" 
@@ -279,13 +290,13 @@ const CreateDocumentDialog = ({ id, onClose }) => {
               onChange={handleChange}
               style={styles.input}
             />
-          </div>
-          
+          </div> */}
+
           <div style={styles.formGroup}>
             <label style={styles.label}>Expected Need Date</label>
-            <input 
-              type="date" 
-              name="expectedNeedDate" 
+            <input
+              type="date"
+              name="expectedNeedDate"
               onChange={handleChange}
               style={styles.input}
             />

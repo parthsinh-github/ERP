@@ -14,7 +14,7 @@ const Exam = () => {
   
   const { role, id } = useParams();
   const { user } = useSelector((state) => state.auth);
-  console.log("User : ",user);
+  // console.log("User : ",user);
   
   const { allExam } = useSelector(store => store.exam);
 
@@ -127,7 +127,7 @@ const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
           </div>
         </div>
 
-        {(user?.role === 'admin' || user?.role === 'faculty') && (
+        {(role === 'admin' || role === 'faculty') && (
           <button onClick={() => setIsModalOpen(true)} style={styles.createButton}>
             <Plus size={18} />
             Create Exam

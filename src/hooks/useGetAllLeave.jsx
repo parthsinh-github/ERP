@@ -19,7 +19,9 @@ const useGetAllLeave = () => {
         credentials: 'include', // needed for cookie-based auth
       });
 
-      const data = await response.json();
+      const data = await response.json(); 
+      // console.log("All Data : ",data);
+      
 
       if (Array.isArray(data.data)) {
         dispatch(setAllLeave(data.data));

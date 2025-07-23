@@ -26,6 +26,8 @@ const ProfileField = ({ label, value, icon, isEditing, onChange, name, type = "t
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
+  console.log("Dteilas : ",user);
+  
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(user || {});
 
@@ -49,6 +51,12 @@ const Profile = () => {
     gender,
     department,
     courses,
+
+    stream,
+    batchYear,
+    currentYear,
+    division,
+
     address,
     city,
     pincode,
@@ -201,6 +209,38 @@ const Profile = () => {
                 isEditing={isEditing}
                 onChange={handleInputChange}
                 name="department"
+              />
+              <ProfileField 
+                label="Stream" 
+                value={stream} 
+                icon="🏬" 
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="stream"
+              />
+              <ProfileField 
+                label="BatchYear" 
+                value={batchYear} 
+                icon="🏬" 
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="batchYear"
+              />
+              <ProfileField 
+                label="Current Year" 
+                value={currentYear} 
+                icon="🏬" 
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="currentYear"
+              />
+              <ProfileField 
+                label="Division" 
+                value={division} 
+                icon="🏬" 
+                isEditing={isEditing}
+                onChange={handleInputChange}
+                name="division"
               />
               {role === "student" && (
                 <ProfileField 

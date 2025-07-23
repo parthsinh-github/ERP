@@ -3,16 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 // import axios from 'axios';
 import { setAllAnnouncement } from '@/redux/announcementSlice';
 import { ANNOUNCEMENT_API_END_POINT } from '@/utils/constant';
+import { useParams } from 'react-router-dom';
 
 const useGetAllAnnouncement = () => {
   const dispatch = useDispatch();
+  const {role , id} = useParams();
   const { searchedQuery } = useSelector(state => state.announcement);
 
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
    try {
   const response = await fetch(
-    `${ANNOUNCEMENT_API_END_POINT}/allAnnouncements`,
+    `${ANNOUNCEMENT_API_END_POINT}/${id}`,
     {
       method: 'GET',
       credentials: 'include', // equivalent to axios' withCredentials: true
@@ -20,6 +22,8 @@ const useGetAllAnnouncement = () => {
   );
 
   const data = await response.json();
+  console.log("Announcment :" , data);
+  
 
   if (Array.isArray(data)) {
     dispatch(setAllAnnouncement(data));

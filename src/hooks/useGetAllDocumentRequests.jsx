@@ -11,7 +11,7 @@ const useGetAllDocumentRequests = () => {
       
   const { role, id } = useParams();
       
-          console.log("User : ",role);
+          // console.log("User : ",role);
           
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const useGetAllDocumentRequests = () => {
           credentials: 'include', // in case cookies or token
         });
         const data = await res.json();
-          console.log("Data : ",data);
+          console.log("Data ",data);
           
         
 

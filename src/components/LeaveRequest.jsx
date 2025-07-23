@@ -17,6 +17,7 @@ const LeaveRequest = () => {
   const [showForm, setShowForm] = useState(false);
 
   const { allLeave } = useSelector((state) => state.leave);
+  
   const userId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const [formData, setFormData] = useState({
@@ -255,8 +256,8 @@ const LeaveRequest = () => {
               >
                 <div style={styles.cardHeader}>
                   <div style={styles.cardHeaderLeft}>
-                    <h3 style={styles.cardTitle}>{item.studentName}</h3>
-                    <p style={styles.cardSubtitle}>ID: {item.studentId}</p>
+                    <h3 style={styles.cardTitle}>{item.createdBy?.fullName}</h3>
+                    <p style={styles.cardSubtitle}>ID: {item.createdBy?.enrollmentNumber}</p>
                   </div>
                   <div style={styles.statusBadge}>
                     <div style={{ ...styles.statusIcon, color: getStatusColor(item.status) }}>
@@ -271,7 +272,13 @@ const LeaveRequest = () => {
                 <div style={styles.cardContent}>
                   <div style={styles.cardInfoRow}>
                     <User size={16} style={{ marginRight: '8px', color: '#64748b' }} />
-                    <span style={styles.cardInfo}>{item.department}</span>
+                    <span style={styles.cardInfo}>{item.createdBy?.department}</span>
+                  </div>
+                   <div style={styles.cardInfoRow}>                  
+                    <span style={styles.cardInfo}>{item.createdBy?.phoneNumber}</span>
+                  </div>
+                   <div style={styles.cardInfoRow}>                  
+                    <span style={styles.cardInfo}>{item.createdBy?.division}</span>
                   </div>
 
                   <div style={styles.cardInfoRow}>
@@ -286,9 +293,10 @@ const LeaveRequest = () => {
                   </div>
 
                   <div style={styles.reasonPreview}>
-                    <strong>Reason:</strong> {item.reason.length > 60 ? `${item.reason.substring(0, 60)}...` : item.reason}
-                  </div>
-                </div>
+        <strong>Reason:</strong>{' '}
+        {item.reason.length > 60 ? `${item.reason.substring(0, 60)}...` : item.reason}
+      </div>
+    </div>
 
                 <div style={styles.cardFooter}>
                   <span style={styles.cardFooterText}>
@@ -314,7 +322,7 @@ const LeaveRequest = () => {
             <div style={styles.dialogContent}>
               <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.formRow}>
-                  <div style={styles.inputGroup}>
+                  {/* <div style={styles.inputGroup}>
                     <label style={styles.label}>Student Name</label>
                     <input
                       type="text"
@@ -325,8 +333,8 @@ const LeaveRequest = () => {
                       style={styles.input}
                       required
                     />
-                  </div>
-                  <div style={styles.inputGroup}>
+                  </div> */}
+                  {/* <div style={styles.inputGroup}>
                     <label style={styles.label}>Student ID</label>
                     <input
                       type="text"
@@ -337,10 +345,10 @@ const LeaveRequest = () => {
                       style={styles.input}
                       required
                     />
-                  </div>
+                  </div> */}
                 </div>
 
-                <div style={styles.inputGroup}>
+                {/* <div style={styles.inputGroup}>
                   <label style={styles.label}>Department</label>
                   <input
                     type="text"
@@ -351,7 +359,7 @@ const LeaveRequest = () => {
                     style={styles.input}
                     required
                   />
-                </div>
+                </div> */}
 
                 <div style={styles.formRow}>
                   <div style={styles.inputGroup}>
@@ -419,7 +427,7 @@ const LeaveRequest = () => {
                 <div style={styles.detailHeader}>
                   <div style={styles.detailHeaderLeft}>
                     <h4 style={styles.detailTitle}>{selectedLeave.studentName}</h4>
-                    <p style={styles.detailSubtitle}>ID: {selectedLeave.studentId}</p>
+                    <p style={styles.detailSubtitle}>ID: {selectedLeave.createdBy?.enrollmentNumber}</p>
                   </div>
                   <div style={styles.statusBadge}>
                     <div style={{ ...styles.statusIcon, color: getStatusColor(selectedLeave.status) }}>
@@ -433,7 +441,13 @@ const LeaveRequest = () => {
 
                 <div style={styles.detailBody}>
                   <div style={styles.detailRow}>
-                    <strong>Department:</strong> {selectedLeave.department}
+                    <strong>Department:</strong> {selectedLeave.createdBy?.enrollmentNumber}
+                  </div>
+                  <div style={styles.detailRow}>
+                    <strong>Email:</strong> {selectedLeave.createdBy?.email}
+                  </div>
+                  <div style={styles.detailRow}>
+                    <strong>Address:</strong> {selectedLeave.createdBy?.address}
                   </div>
                   <div style={styles.detailRow}>
                     <strong>Duration:</strong> {new Date(selectedLeave.fromDate).toLocaleDateString()} - {new Date(selectedLeave.toDate).toLocaleDateString()}

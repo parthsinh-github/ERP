@@ -255,7 +255,7 @@ const Signup = () => {
                       <option value="Other">Other</option>
                     </select>
                   </div>
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label className="form-label">Department</label>
                     <select
                       name="department"
@@ -279,7 +279,7 @@ const Signup = () => {
                     </select>
 
 
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
