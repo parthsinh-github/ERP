@@ -23,7 +23,6 @@ const useGetAllDocumentRequests = () => {
           credentials: 'include', // in case cookies or token
         });
         const data = await res.json();
-          console.log("Data ",data);
           
         
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from '@/redux/authSlice';
 import { USER_API_END_POINT } from '@/utils/constant';
@@ -48,7 +49,7 @@ const Signup = () => {
 
   const handleSendOtp = async () => {
     if (!input.email) {
-      alert('Enter email first');
+  toast.error('Enter email first');   
       return;
     }
 
@@ -62,10 +63,11 @@ const Signup = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
 
-      alert('OTP sent!');
+ toast.success('OTP sent!');   // ✅ replaced alert with toast
       setIsOtpSent(true); 
     } catch (err) {
-      alert(err.message);
+     toast.error(err.message);
+
     }
   };
 
@@ -82,9 +84,9 @@ const Signup = () => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || 'OTP verification failed');
-        alert('OTP verified!');
+  toast.success('OTP verified!');
 
-      toast.success('OTP verified');
+
 
       setInput((prev) => ({ ...prev, otp }));
 
@@ -109,10 +111,10 @@ const Signup = () => {
       return toast.error('Secret key is required for admin/faculty');
     }
 
-    if (!isOtpVerified) {
-      toast.error('Please verify OTP before submitting');
-      return;
-    }
+    // if (!isOtpVerified) {
+    //   toast.error('Please verify OTP before submitting');
+    //   return;
+    // }
 
 
     try {

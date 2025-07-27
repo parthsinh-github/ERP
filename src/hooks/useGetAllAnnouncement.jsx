@@ -14,7 +14,7 @@ const useGetAllAnnouncement = () => {
     const fetchAllAnnouncements = async () => {
    try {
   const response = await fetch(
-    `${ANNOUNCEMENT_API_END_POINT}/${id}`,
+    `http://localhost:3000/api/v1/announcement/${id}`,
     {
       method: 'GET',
       credentials: 'include', // equivalent to axios' withCredentials: true
@@ -22,7 +22,6 @@ const useGetAllAnnouncement = () => {
   );
 
   const data = await response.json();
-  console.log("Announcment :" , data);
   
 
   if (Array.isArray(data)) {

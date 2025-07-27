@@ -16,7 +16,6 @@ const useGetAllExam = () => {
       });
 
       const data = await response.json();
-      console.log("Data is : ",data);
       
       
 

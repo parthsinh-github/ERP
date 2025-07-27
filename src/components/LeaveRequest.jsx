@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, X, Calendar, User, FileText, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+import { toast, Toaster } from 'react-hot-toast';   // ✅ Added
 import useGetAllLeave from '../hooks/useGetAllLeave';
 
 import { LEAVE_API_END_POINT } from '@/utils/constant';
@@ -17,6 +19,8 @@ const LeaveRequest = () => {
   const [showForm, setShowForm] = useState(false);
 
   const { allLeave } = useSelector((state) => state.leave);
+   console.log("Leaves: ",allLeave);
+  
   
   const userId = JSON.parse(localStorage.getItem('user'))?._id;
 
@@ -57,7 +61,8 @@ const LeaveRequest = () => {
       
       if (!response.ok) throw new Error('Failed to submit leave request');
 
-      alert('Leave request sent!');
+      
+ toast.success('✅ Leave request sent successfully!');
       setFormData({
         studentName: '',
         studentId: '',
@@ -71,7 +76,7 @@ const LeaveRequest = () => {
       refreshLeave();
     } catch (err) {
       console.error(err);
-      alert('Error submitting leave request');
+ toast.error('❌ Failed to submit leave request');
     } finally {
       setSubmitting(false);
     }
@@ -115,18 +120,19 @@ const LeaveRequest = () => {
           body: JSON.stringify({ status: action }),
         });
       } else {
-        alert('Unauthorized action');
+       
+ toast.error('⚠️ Unauthorized action');
         return;
       }
 
       if (!response.ok) throw new Error('Action failed');
 
-      alert(`Leave ${action === 'withdraw' ? 'withdrawn' : `marked as ${action}`} successfully`);
+toast.success(`✅ Leave ${action === 'withdraw' ? 'withdrawn' : `marked as ${action}`} successfully`);
       refreshLeave();
       handleCloseDialog();
     } catch (err) {
       console.error(err);
-      alert('Something went wrong');
+     toast.error('❌ Something went wrong while processing request');
     }
   };
 

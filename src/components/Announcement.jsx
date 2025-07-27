@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+
+import { toast, Toaster } from 'react-hot-toast';   // ✅ Added
+
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, X, Calendar, User, Plus, Bell } from 'lucide-react';
 import useGetAllAnnouncement from '../hooks/useGetAllAnnouncement';
@@ -14,6 +17,8 @@ const Announcement = () => {
   const { allAnnouncement, searchedQuery } = useSelector(state => state.announcement);
 
   const { user } = useSelector(state => state.auth);
+  
+  
 
   const [formData, setFormData] = useState({
     title: '',
@@ -31,46 +36,51 @@ const Announcement = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
 
-    try {
-      if (!id) {
-        alert('User ID is missing. Cannot create announcement.');
-        setSubmitting(false);
-        return;
-      }
-
-      const response = await fetch(`${ANNOUNCEMENT_API_END_POINT}/${id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          createdBy: id,
-        }),
-        credentials: 'include',
-      });
-
-      const data = await response.json();
-      console.log("Dtaa  : ",data);
-      
-      if (response.ok) {
-        alert('✅ Announcement added!');
-        setFormData({ title: '', description: '', date: '' });
-        setShowForm(false);
-      } else {
-        alert(`⚠️ Failed to create announcement: ${data.error || 'Unknown error'}`);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('❌ Error creating announcement');
-    } finally {
+  try {
+    if (!id) {
+      toast.error('User ID is missing. Cannot create announcement.');
       setSubmitting(false);
+      return;
     }
-  };
+
+    // ✅ Convert empty strings to null
+    const cleanedData = {
+      ...formData,
+      stream: formData.stream || null,
+      batchYear: formData.batchYear || null,
+      division: formData.division || null,
+      createdBy: id,
+    };
+
+    const response = await fetch(`http://localhost:3000/api/v1/announcement/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cleanedData),
+      credentials: 'include',
+    });
+
+    const data = await response.json();
+    console.log("Dtaa  : ", data);
+
+    if (response.ok) {
+      toast.success('✅ Announcement added!');
+      setFormData({ title: '', description: '', date: '' });
+      setShowForm(false);
+    } else {
+      toast.error(`⚠️ Failed to create announcement: ${data.error || 'Unknown error'}`);
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error('❌ Error creating announcement');
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const closeDialog = () => {
     setSelectedAnnouncement(null);
@@ -184,40 +194,98 @@ const Announcement = () => {
             </div>
             <div style={styles.dialogContent}>
               <form onSubmit={handleSubmit} style={styles.form}>
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Title</label>
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Enter announcement title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    style={styles.input}
-                    required
-                  />
-                </div>
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Description</label>
-                  <textarea
-                    name="description"
-                    placeholder="Enter announcement description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    style={styles.textarea}
-                    required
-                  />
-                </div>
-                <div style={styles.inputGroup}>
-                  <label style={styles.label}>Date</label>
-                  <input
-                    type="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    style={styles.input}
-                    required
-                  />
-                </div>
+               <div style={styles.inputGroup}>
+  <label style={styles.label}>Title</label>
+  <input
+    type="text"
+    name="title"
+    placeholder="Enter announcement title"
+    value={formData.title}
+    onChange={handleChange}
+    style={styles.input}
+    required
+  />
+</div>
+
+<div style={styles.inputGroup}>
+  <label style={styles.label}>Description</label>
+  <textarea
+    name="description"
+    placeholder="Enter announcement description"
+    value={formData.description}
+    onChange={handleChange}
+    style={styles.textarea}
+    required
+  />
+</div>
+
+<div style={styles.inputGroup}>
+  <label style={styles.label}>Batch Year</label>
+  <select
+    name="batchYear"
+    value={formData.batchYear}
+    onChange={handleChange}
+    
+    style={styles.select} // Add this in your styles
+  >
+    <option value="">Select Batch Year</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    <option value="2025">2025</option>
+    <option value="2026">2026</option>
+  </select>
+</div>
+
+<div style={styles.inputGroup}>
+  <label style={styles.label}>Stream</label>
+  <select
+    name="stream"
+    value={formData.stream}
+    onChange={handleChange}
+    
+    style={styles.select}
+  >
+    <option value="">Select Stream</option>
+    <option value="BBA">BBA</option>
+    <option value="BCA">BCA</option>
+    <option value="BTECH">BTECH</option>
+    <option value="BCOM">BCOM</option>
+    <option value="MCA">MCA</option>
+    <option value="MBA">MBA</option>
+    <option value="OTHER">OTHER</option>
+  </select>
+</div>
+
+<div style={styles.inputGroup}>
+  <label style={styles.label}>Division</label>
+  <select
+    name="division"
+    value={formData.division}
+    onChange={handleChange}
+    
+    style={styles.select}
+  >
+    <option value="">Select Division</option>
+    <option value="Div-1">Div-1</option>
+    <option value="Div-2">Div-2</option>
+    <option value="Div-3">Div-3</option>
+    <option value="Div-4">Div-4</option>
+    <option value="Div-5">Div-5</option>
+  </select>
+</div>
+
+<div style={styles.inputGroup}>
+  <label style={styles.label}>Date</label>
+  <input
+    type="date"
+    name="date"
+    value={formData.date}
+    onChange={handleChange}
+    style={styles.input}
+    required
+  />
+</div>
+
                 <div style={styles.dialogActions}>
                   <button type="button" onClick={closeForm} style={styles.cancelButton}>
                     Cancel
@@ -255,6 +323,15 @@ const Announcement = () => {
               </div>
               <div style={styles.announcementContent}>
                 <p style={styles.fullDescription}>{selectedAnnouncement.description}</p>
+              </div>
+              <div style={styles.announcementContent}>
+                <p style={styles.fullDescription}>{selectedAnnouncement.batchYear}</p>
+              </div>
+              <div style={styles.announcementContent}>
+                <p style={styles.fullDescription}>{selectedAnnouncement.division}</p>
+              </div>
+              <div style={styles.announcementContent}>
+                <p style={styles.fullDescription}>{selectedAnnouncement.stream}</p>
               </div>
             </div>
           </div>

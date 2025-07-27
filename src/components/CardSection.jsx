@@ -145,7 +145,7 @@ const CardsSection = () => {
         {
             label: "ID Card",
             description: "View and manage your digital identification card",
-            route: "/id-card",
+            route: `/${role}/${id}/IDCard`,
             icon: "🪪",
             gradient: "linear-gradient(135deg, #667eea, #764ba2)",
             status: "Active",

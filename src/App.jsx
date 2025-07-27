@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'react-hot-toast';
 
 import SharedLayout from './layouts/SharedLayout';
 import Document from './components/Document';
@@ -32,6 +31,7 @@ const appRouter = createBrowserRouter([
       { path: 'AllUsers', element: <AllUsers /> },
       { path: 'Document', element: <Document /> },
       { path: 'Profile', element: <Profile /> },
+      { path: 'IDCard', element: <IDCard /> },
     ],
   },
 ]);
@@ -42,6 +42,7 @@ function App() {
       <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading Page...</div>}>
         <RouterProvider router={appRouter} />
       </Suspense>
+         <Toaster position="top-right" reverseOrder={false} />
       {/* Place ToastContainer here as well if needed for SSR/hydration-safe routes */}
     </>
   );
