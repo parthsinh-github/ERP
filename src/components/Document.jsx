@@ -20,7 +20,7 @@ const Document = () => {
 
   const handleAction = async (requestId, status) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/document/${id}/${requestId}`, {
+      const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -307,7 +307,7 @@ const CreateDocumentDialog = ({ id, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/document/${id}`, {
+      const res = await fetch(`${DOCUMENT_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

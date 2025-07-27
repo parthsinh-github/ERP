@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
       createdBy: id,
     };
 
-    const response = await fetch(`http://localhost:3000/api/v1/announcement/${id}`, {
+    const response = await fetch(`${ANNOUNCEMENT_API_END_POINT}/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cleanedData),

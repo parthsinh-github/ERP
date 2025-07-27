@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import useGetAllUsers from '../hooks/useGetAllUsers';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { USER_API_END_POINT } from '@/utils/constant';
+
 const AllUsers = () => {
   useGetAllUsers();
   
@@ -22,7 +24,7 @@ const AllUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/users/all', {
+      const response = await fetch(`${USER_API_END_POINT}/all`, {
           credentials: 'include', 
           headers: {
             'Content-Type': 'application/json',

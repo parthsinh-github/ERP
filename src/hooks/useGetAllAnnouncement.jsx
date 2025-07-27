@@ -13,9 +13,7 @@ const useGetAllAnnouncement = () => {
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
    try {
-  const response = await fetch(
-    `http://localhost:3000/api/v1/announcement/${id}`,
-    {
+const response = await fetch(`${ANNOUNCEMENT_API_END_POINT}/${id}`,     {
       method: 'GET',
       credentials: 'include', // equivalent to axios' withCredentials: true
     }

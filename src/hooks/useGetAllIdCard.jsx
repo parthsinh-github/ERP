@@ -12,7 +12,7 @@ const useGetAllIdCard = () => {
   useEffect(() => {
     const fetchAllIdCards = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/id-card/all/${id}`, {
+        const response = await fetch(`${ID_CARD_API_END_POINT}/all/${id}`, {
           method: 'GET',
           credentials: 'include', // include cookies/session if used
         });

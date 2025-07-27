@@ -4,6 +4,7 @@
   import { useParams } from 'react-router-dom';
   import useGetAllIdCard from '../hooks/useGetAllIdCard';
 
+import { ID_CARD_API_END_POINT } from '@/utils/constant';  // Make sure it's defined
   const IDCardPage = () => {
 
     const {role ,id } = useParams();
@@ -468,7 +469,7 @@ const generateModernPDF = async () => {
     setSubmitting(true);
 
     // ✅ Step 1: Notify backend about the download
-    const response = await fetch(`http://localhost:3000/api/v1/id-card/${id}`, {
+    const response = await fetch(`${ID_CARD_API_END_POINT}/${id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
