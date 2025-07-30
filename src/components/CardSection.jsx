@@ -172,7 +172,7 @@ const CardsSection = () => {
         {
             label: "Form",
             description: "Access and fill out required forms",
-            route: "/form",
+            route: `/${role}/${id}/MultiStepForm`,
             icon: "📋",
             gradient: "linear-gradient(135deg, #43e97b, #38f9d7)",
             status: "Updated",

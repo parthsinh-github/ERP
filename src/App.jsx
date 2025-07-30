@@ -5,6 +5,8 @@ import { Toaster } from 'react-hot-toast';
 import SharedLayout from './layouts/SharedLayout';
 import Document from './components/Document';
 import Profile from './components/Profile';
+import BankDetails from './components/BankDetails';
+import MultiStepForm from './components/MultiStepForm';
 
 const Home = lazy(() => import('./components/Home'));
 const Login = lazy(() => import('./components/auth/Login'));
@@ -15,6 +17,7 @@ const IDCard = lazy(() => import('./components/IDCard'));
 const Exam = lazy(() => import('./components/Exam'));
 const Report = lazy(() => import('./components/Report'));
 const AllUsers = lazy(() => import('./components/AllUsers'));
+const AcademicDetails = lazy(() => import('./components/AcademicDetails'));
 
 const appRouter = createBrowserRouter([
   { path: '/', element: <Login /> },
@@ -32,6 +35,9 @@ const appRouter = createBrowserRouter([
       { path: 'Document', element: <Document /> },
       { path: 'Profile', element: <Profile /> },
       { path: 'IDCard', element: <IDCard /> },
+      { path: 'AcademicDetails', element: <AcademicDetails /> },
+      { path: 'BankDetails', element: <BankDetails /> },
+      { path: 'MultiStepForm', element: <MultiStepForm /> },
     ],
   },
 ]);

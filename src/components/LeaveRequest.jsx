@@ -19,7 +19,6 @@ const LeaveRequest = () => {
   const [showForm, setShowForm] = useState(false);
 
   const { allLeave } = useSelector((state) => state.leave);
-   console.log("Leaves: ",allLeave);
   
   
   const userId = JSON.parse(localStorage.getItem('user'))?._id;

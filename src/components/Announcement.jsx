@@ -19,6 +19,7 @@ const Announcement = () => {
   const { user } = useSelector(state => state.auth);
   
   
+  
 
   const [formData, setFormData] = useState({
     title: '',
@@ -55,7 +56,7 @@ const handleSubmit = async (e) => {
       division: formData.division || null,
       createdBy: id,
     };
-
+    
     const response = await fetch(`${ANNOUNCEMENT_API_END_POINT}/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

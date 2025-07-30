@@ -14,9 +14,9 @@ const Exam = () => {
   
   const { role, id } = useParams();
   const { user } = useSelector((state) => state.auth);
-  // console.log("User : ",user);
   
   const { allExam } = useSelector(store => store.exam);
+  console.log("Exams : ",allExam);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,7 +25,7 @@ const Exam = () => {
     date: '',
     startTime: '',
     endTime: '',
-    department: '',
+    stream: '',
     semester: '',
     subject: '',
     createdBy: '',
@@ -39,7 +39,7 @@ const Exam = () => {
   const handleCreateExam = async (e) => {
     e.preventDefault();
     try {
-const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
+const res = await fetch(`http://localhost:3000/api/v1/exam/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
           date: '',
           startTime: '',
           endTime: '',
-          department: '',
+          stream: '',
           semester: '',
           subject: '',
           createdBy: '',
@@ -233,27 +233,23 @@ const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
                 <div style={styles.formGroup}>
   <label style={styles.label}>
     <Building size={16} />
-    Department *
+    Stream *
   </label>
   <select
-    name="department"
-    value={formData.department}
+    name="stream"
+    value={formData.stream}
     onChange={handleInputChange}
     required
     style={styles.input}
   >
-    <option value="">Select Department</option>
-    <option value="Computer Science">Computer Science</option>
-    <option value="Information Technology">Information Technology</option>
-    <option value="Electronics">Electronics</option>
-    <option value="Mechanical">Mechanical</option>
-    <option value="Civil">Civil</option>
-    <option value="Electrical">Electrical</option>
-    <option value="Business Administration">Business Administration</option>
-    <option value="Commerce">Commerce</option>
-    <option value="Arts">Arts</option>
-    <option value="Science">Science</option>
-    <option value="Other">Other</option>
+  <option value="">Select Stream</option>
+    <option value="BBA">BBA</option>
+    <option value="BCA">BCA</option>
+    <option value="BTECH">BTECH</option>
+    <option value="BCOM">BCOM</option>
+    <option value="MCA">MCA</option>
+    <option value="MBA">MBA</option>
+    <option value="OTHER">OTHER</option>
   </select>
 </div>
 
@@ -337,8 +333,8 @@ const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
               <div style={styles.cardBody}>
                 <div style={styles.infoRow}>
                   <Building size={16} style={styles.infoIcon} />
-                  <span style={styles.infoLabel}>Department:</span>
-                  <span style={styles.infoValue}>{exam.department}</span>
+                  <span style={styles.infoLabel}>Steam:</span>
+                  <span style={styles.infoValue}>{exam.stream}</span>
                 </div>
                 
                 <div style={styles.infoRow}>

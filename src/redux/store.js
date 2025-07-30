@@ -7,6 +7,9 @@ import examSlice from "./examSlice";
 import reportSlice from "./reportSlice";
 import userSlice from "./userSlice";
 import documentSlice from "./documentSlice"
+import academicDetailReducer from "./acadamicDetailSlice.js"; // ✅ fixed name
+
+import bankDetailReducer from "./bankDetailSlice";
 import {
     persistStore,
     persistReducer,
@@ -36,6 +39,9 @@ const rootReducer = combineReducers({
     report: reportSlice, 
     user: userSlice,
     document: documentSlice,
+       academicDetail: academicDetailReducer, 
+           bankDetail: bankDetailReducer,
+
     // Add other reducers here as needed
 });
 
