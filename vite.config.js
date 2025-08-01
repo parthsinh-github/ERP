@@ -4,7 +4,7 @@ import compression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-    base: './',  // ✅ ADD THIS LINE HERE
+base: '/',
   plugins: [
     react(),
     compression({
