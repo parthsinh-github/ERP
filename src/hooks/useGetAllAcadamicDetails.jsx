@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAllAcademicDetails } from '../redux/acadamicDetailSlice.js'; // ✅ fixed path
 import { useParams } from 'react-router-dom';
 
+import { ACADAMIC_API_END_POINT } from '@/utils/constant';
+
 const useGetAllAcademicDetails = () => {
   const dispatch = useDispatch();
   const { id, role } = useParams();
@@ -12,7 +14,7 @@ const useGetAllAcademicDetails = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/academic/${id}`, {
+        const response = await fetch(`${ACADAMIC_API_END_POINT}/${id}`, {
           method: 'GET',
           credentials: 'include',
         });

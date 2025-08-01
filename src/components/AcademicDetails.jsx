@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import useGetAllAcademicDetails from '../hooks/useGetAllAcadamicDetails';
 import { useParams } from 'react-router-dom';
 
+
+import { ACADAMIC_API_END_POINT } from '@/utils/constant';
+
 const AcademicDetails = () => {
   const dispatch = useDispatch();
   useGetAllAcademicDetails();
@@ -112,10 +115,11 @@ const AcademicDetails = () => {
       setUploadStatus('uploading');
       setUploadProgress(0);
       
-      const xhr = new XMLHttpRequest();const uploadUrl = `http://localhost:3000/api/v1/academic/${id}`;
+      const xhr = new XMLHttpRequest();
+      const uploadUrl = `${ACADAMIC_API_END_POINT}/${id}`;
       xhr.open('POST', uploadUrl, true);
       xhr.withCredentials = true;
-
+console.log(uploadUrl); 
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const progress = Math.round((event.loaded * 100) / event.total);
@@ -128,9 +132,7 @@ const AcademicDetails = () => {
           const res = JSON.parse(xhr.responseText);
           if (res.success) {
             setUploadStatus('success');
-            setTimeout(() => {
-              window.location.reload();
-            }, 1500);
+          
           } else {
             setUploadStatus('error');
             alert('⚠️ Upload failed: ' + res.message);

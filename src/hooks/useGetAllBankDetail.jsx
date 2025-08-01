@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAllBankDetails } from '../redux/bankDetailSlice'; // ✅ fixed path
 import { useParams } from 'react-router-dom';
 
+import { BANK_API_END_POINT } from '@/utils/constant';
+
 const useGetAllBankDetail = () => {
   const dispatch = useDispatch();
   const { id, role } = useParams();
@@ -11,7 +13,7 @@ const useGetAllBankDetail = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/bank/${id}`, {
+        const response = await fetch(`${BANK_API_END_POINT}/${id}`, {
           method: 'GET',
           credentials: 'include',
         });

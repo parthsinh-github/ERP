@@ -5,6 +5,9 @@ import axios from "axios";
 import { setAllBankDetails } from "../redux/bankDetailSlice";
 import useGetAllBankDetail from "../hooks/useGetAllBankDetail";
 
+
+import { BANK_API_END_POINT } from '@/utils/constant';
+
 const BankDetails = () => {
  const hookResult = useGetAllBankDetail() || {};
 const { loading, error } = hookResult;
@@ -115,7 +118,7 @@ const { loading, error } = hookResult;
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/v1/bank/${id}`,
+        `${BANK_API_END_POINT}/${id}`,
         uploadData,
         {
           headers: { "Content-Type": "multipart/form-data" },

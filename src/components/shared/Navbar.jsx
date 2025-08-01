@@ -9,14 +9,24 @@ import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
+import adminAvatar from '../../assets/administrator.png';
+import facultyAvatar from '../../assets/teacher.png';
+import studentAvatar from '../../assets/student.png';
+
 
 const Navbar = () => {
-
   const { role, id } = useParams(); 
   const { user } = useSelector((state) => state.auth);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
+const roleAvatars = {
+  admin: adminAvatar,
+  faculty: facultyAvatar,
+  student: studentAvatar,
+};
   const handleClick = () => {
     if (role && id) {
       navigate(`/${role}/${id}/announcement`);
@@ -51,29 +61,20 @@ const Navbar = () => {
               College <span className="brand-highlight">ERP</span>
             </h1>
           </div>
-
+    
           {/* Navigation */}
           <div className="nav-section">
             <ul className="nav-list">
-              {/* Role-based Navigation */}
-              {user && user.role === 'recruiter' ? (
-                <>
-                  <li className="nav-item">
-                    <Link to="/admin/companies" className="nav-link">Companies</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/jobs" className="nav-link">Jobs</Link>
-                  </li>
-                </>
-              ) : (
+             
                 <>
                   <li className="nav-item">
                     <div onClick={handleClick} className="notification-btn">
                       <Bell size={20} />
+                      
                     </div>
                   </li>
                 </>
-              )}
+              
             </ul>
 
             {/* Authentication or Profile UI */}
@@ -90,16 +91,41 @@ const Navbar = () => {
               <div className="profile-section">
                 {/* Display Avatar and Popover only if the user is logged in */}
                 <Popover>
-                  <PopoverTrigger asChild>
-                    <Avatar className="profile-avatar">
-                      <AvatarImage src={user.profilePhoto || "/default-avatar.png"} alt="avatar" />
-                    </Avatar>
-                  </PopoverTrigger>
+                  <PopoverTrigger asChild>  
+  <Avatar className="profile-avatar">
+<AvatarImage 
+  src={
+    user?.role === "admin" 
+      ? adminAvatar 
+      : user?.role === "faculty" 
+        ? facultyAvatar 
+        : user?.role === "student" 
+          ? studentAvatar 
+          : ""
+  } 
+  alt={`${user?.role || ""} avatar`} 
+/>
+
+</Avatar>
+
+</PopoverTrigger>
+
                   <PopoverContent className="popover-content">
                     <div>
                       <div className="profile-header">
                         <Avatar className="profile-avatar-large">
-                          <AvatarImage src={user.profilePhoto || "/default-avatar.png"} alt="avatar" />
+  <AvatarImage 
+    src={
+      user?.role === "admin" 
+        ? adminAvatar 
+        : user?.role === "faculty" 
+          ? facultyAvatar 
+          : user?.role === "student" 
+            ? studentAvatar 
+            : ""
+    } 
+    alt={`${user?.role || ""} avatar`} 
+  />
                         </Avatar>
                         <div className="profile-info">
                           <h4>{user?.fullName || "Unknown User"}</h4>
@@ -132,6 +158,13 @@ const Navbar = () => {
 
 
       <style>{`
+      .profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
         .navbar-container {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           backdrop-filter: blur(20px);
@@ -349,7 +382,8 @@ const Navbar = () => {
   padding: 20px;
   width: 320px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  z-index: 100;
+   z-index: 9999 !important; /* ✅ ensure popover is above navbar */
+  overflow: visible !important; /* ✅ allow avatar to be fully visible */
 }
 
 .profile-header {
@@ -365,6 +399,7 @@ const Navbar = () => {
   border-radius: 50%;
   border: 3px solid #667eea;
   overflow: hidden;
+   z-index: 10000 !important; /* ✅ keep image above background blur */
 }
 
 .profile-info h4 {

@@ -10,7 +10,7 @@ const useGetAllExam = () => {
  useEffect(() => {
   const fetchAllExams = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/v1/exam/allExam', {
+      const response = await fetch(`${EXAM_API_END_POINT}/allExam`, {
         method: 'GET',
         credentials: 'include', // Ensures cookies/session tokens are sent
       });

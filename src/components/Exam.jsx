@@ -39,7 +39,7 @@ const Exam = () => {
   const handleCreateExam = async (e) => {
     e.preventDefault();
     try {
-const res = await fetch(`http://localhost:3000/api/v1/exam/${id}`, {
+const res = await fetch(`${EXAM_API_END_POINT}/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

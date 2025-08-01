@@ -8,3 +8,5 @@ export const EXAM_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/
 export const REPORT_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/report";
 export const APPLICATION_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/student";
 export const DOCUMENT_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/document";
+export const ACADAMIC_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/academic";
+export const BANK_API_END_POINT = "https://erp-backend-gfjd.onrender.com/api/v1/bank";
